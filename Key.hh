@@ -1,8 +1,6 @@
 #pragma once
 
-//#include <cstdlib>
 #include <vector>
-#include <string>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -43,6 +41,7 @@ namespace algav {
 		}
 
 		friend std::ostream & operator << (std::ostream & os, const Key & k){
+			os << "0x";
 			for (size_t i = 0; i < 4; ++i){
 				os << std::hex << k.key[i];
 			}

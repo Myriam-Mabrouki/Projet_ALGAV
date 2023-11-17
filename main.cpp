@@ -1,4 +1,6 @@
 #include "Key.hh"
+#include "Heap.hh"
+//#include "TournoiBinomial.hh"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -55,6 +57,28 @@ int main(int argc, char ** argv) {
 		}
 	}
 
+	Heap h = Heap();
+//	h.Ajout(keys[0]);
+//	h.Ajout(keys[1]);
+//	h.Ajout(keys[2]);
+//	h.Ajout(keys[3]);
+//	h.Ajout(keys[4]);
+//	h.Ajout(keys[5]);
+//	cout << h << endl;
+//	h.SupprMin();
+//	cout << h << endl;
+//	h.SupprMin();
+//	cout << h << endl;
+//	h.SupprMin();
+//	cout << h << endl;
+//	h.SupprMin();
+//	cout << h << endl;
+//	h.SupprMin();
+//	cout << h << endl;
+//	h.SupprMin();
+
+	h.AjoutsIteratifs(keys);
+	cout << h.getSize() << endl;
 	return 0;
 
 }
