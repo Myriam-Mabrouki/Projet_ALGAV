@@ -7,20 +7,32 @@ namespace algav {
 		return size == 0;
 	}
 
-	bool TournoiBinomial::Degre(){
+	size_t TournoiBinomial::Degre(){
 		return children.size();
 	}
 
-	TournoiBinomial & TournoiBinomial::Union2Tid (TournoiBinomial & T1, const TournoiBinomial & T2){
-		T1.children.push_back(T2);
-		return T1;
+	size_t TournoiBinomial::getSize(){
+		return size;
+	}
+
+	TournoiBinomial & TournoiBinomial::Union2Tid (TournoiBinomial & T){
+		if (value->inf(*(T.value))){
+			children.push_back(T);
+			size += T.size;
+			return *this;
+		}
+		else {
+			T.children.push_back(T);
+			T.size += size;
+			return T;
+		}
 	}
 
 	FileBinomiale * TournoiBinomial::Decapite (){
 		FileBinomiale * fb = new FileBinomiale();
-//			for (TournoiBinomial & t : children){
-//				//fb->AjoutMin(t);
-//			}
+		for (auto it = children.rbegin(); it != children.rend(); ++it){
+			fb->AjoutMin(*it);
+		}
 		return fb;
 	}
 
@@ -29,16 +41,27 @@ namespace algav {
 	}
 
 	TournoiBinomial FileBinomiale::MinDeg(){
-		return tournois[size-1];
+		if (size > 0) return tournois.back();
+		return TournoiBinomial(); // @suppress("Ambiguous problem")
 	}
 
 	FileBinomiale FileBinomiale::Reste(){
-		tournois.pop_back();
+		if (size > 0) {
+			size -= tournois.back().getSize();
+			tournois.pop_back();
+			return *this;
+		}
+		else return FileBinomiale();
+	}
+
+	FileBinomiale FileBinomiale::AjoutMin(TournoiBinomial & T){
+		tournois.push_back(T);
+		size += T.getSize();
 		return *this;
 	}
 
-	void FileBinomiale::AjoutMin(TournoiBinomial & T){
-
+	size_t FileBinomiale::getSize(){
+		return size;
 	}
 
 }

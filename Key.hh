@@ -15,6 +15,7 @@ namespace algav {
 
 	public:
 		Key(std::string hex){
+			//TODO clé < 128 bits
 			hex = hex.substr(2, hex.size());
 			std::string tmp;
 			for (size_t i = 0; i < 4; ++i){

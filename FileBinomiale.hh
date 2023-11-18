@@ -1,29 +1,33 @@
 #pragma once
 
 #include "Key.hh"
-//#include "TournoiBinomial.hh"
 #include <vector>
 
 namespace algav {
 
 	class FileBinomiale;
 
+
 	class TournoiBinomial {
 	private:
-		//Key root; //TODO init ???
+		Key * value;
 		std::vector<TournoiBinomial> children;
 		size_t size;
 
 	public:
-		TournoiBinomial():size(0){}
+		TournoiBinomial():value(nullptr),size(0){}
+
+		TournoiBinomial(Key * value):value(value),size(1){}
 
 		bool EstVide();
 
-		bool Degre();
+		size_t Degre();
 
-		TournoiBinomial & Union2Tid (TournoiBinomial & T1, const TournoiBinomial & T2);
+		TournoiBinomial & Union2Tid (TournoiBinomial & T);
 
 		FileBinomiale * Decapite ();
+
+		size_t getSize();
 
 	};
 
@@ -41,8 +45,9 @@ namespace algav {
 
 		FileBinomiale Reste();
 
-		void AjoutMin(TournoiBinomial & T);
+		FileBinomiale AjoutMin(TournoiBinomial & T);
 
+		size_t getSize();
 
 	};
 
