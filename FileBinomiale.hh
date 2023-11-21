@@ -27,6 +27,8 @@ namespace algav {
 
 		FileBinomiale * Decapite ();
 
+		FileBinomiale * File ();
+
 		size_t getSize();
 
 	};
@@ -43,9 +45,13 @@ namespace algav {
 
 		TournoiBinomial MinDeg();
 
-		FileBinomiale Reste();
+		FileBinomiale Reste(FileBinomiale & F);
 
-		FileBinomiale AjoutMin(TournoiBinomial & T);
+		FileBinomiale AjoutMin(TournoiBinomial & T, FileBinomiale & F);
+
+		FileBinomiale UFret(FileBinomiale & F1, FileBinomiale & F2, TournoiBinomial & T);
+
+		FileBinomiale UnionFile(FileBinomiale & F1, FileBinomiale & F2);
 
 		size_t getSize();
 

@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
 	}
 
 	string filename = argv[1];
-	vector<Key> keys = readKeysFromFile(filename);
+	//vector<Key> keys = readKeysFromFile(filename);
 
 //	for (Key & k : keys){
 //		cout << k << endl;
@@ -57,14 +57,15 @@ int main(int argc, char ** argv) {
 //		}
 //	}
 
+	Key k = Key("0x0A");
 	Heap h = Heap();
-//	h.Ajout(keys[0]);
-//	h.Ajout(keys[1]);
+	h.Ajout(k);
+	//h.Ajout(keys[1]);
 //	h.Ajout(keys[2]);
 //	h.Ajout(keys[3]);
 //	h.Ajout(keys[4]);
 //	h.Ajout(keys[5]);
-//	cout << h << endl;
+	cout << h << endl;
 //	h.SupprMin();
 //	cout << h << endl;
 //	h.SupprMin();
@@ -77,7 +78,7 @@ int main(int argc, char ** argv) {
 //	cout << h << endl;
 //	h.SupprMin();
 
-	h.AjoutsIteratifs(keys);
+	//h.AjoutsIteratifs(keys);
 	//cout << h.getSize() << endl;
 
 	TournoiBinomial tb0 = TournoiBinomial(); // @suppress("Ambiguous problem")
@@ -91,7 +92,7 @@ int main(int argc, char ** argv) {
 
 	Key k1 = Key("0xdf6943ba6d51464f6b02157933bdd9ad");
 
-	TournoiBinomial tb1 = TournoiBinomial(&keys[0]);
+	/*TournoiBinomial tb1 = TournoiBinomial(&keys[0]);
 	TournoiBinomial tb2 = TournoiBinomial(&keys[1]);
 
 	cout << "size tb1 : " << tb1.getSize() << endl;
@@ -110,9 +111,9 @@ int main(int argc, char ** argv) {
 		cout << "ERR  : la file fb n'est pas vide" << endl;
 	}
 
-	fb.AjoutMin(tb2);
+	fb.AjoutMin(tb2, fb);
 	cout << "size fb : " << fb.getSize() << endl;
-	fb.AjoutMin(tb1);
+	fb.AjoutMin(tb1, fb);
 	cout << "size fb : " << fb.getSize() << endl;
 
 	TournoiBinomial tb3 = TournoiBinomial(&keys[2]);
@@ -128,8 +129,8 @@ int main(int argc, char ** argv) {
 	cout << "size tb_min : " << tb_min.getSize() << endl;
 
 
-	FileBinomiale tb_reste = fb2->Reste();
-	cout << "size tb_reste : " << tb_reste.getSize() << endl;
+	FileBinomiale tb_reste = fb2->Reste(*fb2);
+	cout << "size tb_reste : " << tb_reste.getSize() << endl;*/
 
 //	FileBinomiale fb1 = FileBinomiale();
 //	fb1.AjoutMin(tb3);

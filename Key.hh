@@ -18,12 +18,32 @@ namespace algav {
 			//TODO clé < 128 bits
 			hex = hex.substr(2, hex.size());
 			std::string tmp;
-			for (size_t i = 0; i < 4; ++i){
-				tmp = hex.substr(i*8, 8);
+			size_t i;
+			for (i = 0; i < 4; ++i){
+				if (hex.size() < 8) {
+					break;
+				}
+				tmp = hex.substr(0, 8);
+				hex = hex.substr(8, hex.size());
 				unsigned long value;
 				std::istringstream iss(tmp);
 				iss >> std::hex >> value;
 				key.emplace_back(value);
+			}
+
+			for (size_t j = i; j < 4; ++j){
+
+				if (hex.size() > 0){
+					tmp = hex;
+					unsigned long value;
+					std::istringstream iss(tmp);
+					iss >> std::hex >> value;
+					key.emplace_back(value);
+					hex = hex.substr(0,0);
+				}
+				else {
+					key.insert(key.begin(), 0);
+				}
 			}
 		}
 
