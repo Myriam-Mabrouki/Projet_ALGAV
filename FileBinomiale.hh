@@ -2,6 +2,7 @@
 
 #include "Key.hh"
 #include <vector>
+#include <cmath>
 
 namespace algav {
 
@@ -31,6 +32,8 @@ namespace algav {
 
 		size_t getSize();
 
+		size_t getSize2 () const;
+
 	};
 
 	class FileBinomiale {
@@ -47,13 +50,26 @@ namespace algav {
 
 		FileBinomiale Reste(FileBinomiale & F);
 
-		FileBinomiale AjoutMin(TournoiBinomial & T, FileBinomiale & F);
+		FileBinomiale AjoutMin(TournoiBinomial & T);
 
 		FileBinomiale UFret(FileBinomiale & F1, FileBinomiale & F2, TournoiBinomial & T);
 
 		FileBinomiale UnionFile(FileBinomiale & F1, FileBinomiale & F2);
 
+		FileBinomiale Ajout(Key & k);
+
+		FileBinomiale Construction(std::vector<Key> keys);
+
 		size_t getSize();
+
+		friend std::ostream & operator << (std::ostream & os, const FileBinomiale & F){
+			os << "<";
+			for (auto & t : F.tournois){
+				os << std::log2(t.getSize2()) << ", ";
+			}
+			os << ">";
+			return os;
+		}
 
 	};
 

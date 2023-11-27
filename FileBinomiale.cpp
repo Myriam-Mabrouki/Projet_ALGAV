@@ -15,6 +15,10 @@ namespace algav {
 		return size;
 	}
 
+	size_t TournoiBinomial::getSize2() const{
+		return size;
+	}
+
 	TournoiBinomial & TournoiBinomial::Union2Tid (TournoiBinomial & T){
 		if (value->inf(*(T.value))){
 			children.push_back(T);
@@ -31,14 +35,14 @@ namespace algav {
 	FileBinomiale * TournoiBinomial::Decapite (){
 		FileBinomiale * fb = new FileBinomiale();
 		for (auto it = children.rbegin(); it != children.rend(); ++it){
-			fb->AjoutMin(*it, *fb);
+			fb->AjoutMin(*it);
 		}
 		return fb;
 	}
 
 	FileBinomiale * TournoiBinomial::File (){
 		FileBinomiale * fb = new FileBinomiale();
-		fb->AjoutMin(*this, *fb);
+		fb->AjoutMin(*this);
 		return fb;
 	}
 
@@ -59,10 +63,10 @@ namespace algav {
 		return F;
 	}
 
-	FileBinomiale FileBinomiale::AjoutMin(TournoiBinomial & T, FileBinomiale & F){
-		F.tournois.push_back(T);
-		F.size += T.getSize();
-		return F;
+	FileBinomiale FileBinomiale::AjoutMin(TournoiBinomial & T){
+		tournois.push_back(T);
+		size += T.getSize();
+		return *this;
 	}
 
 	FileBinomiale FileBinomiale::UFret(FileBinomiale & F1, FileBinomiale & F2, TournoiBinomial & T){
@@ -80,12 +84,12 @@ namespace algav {
 			if (T1.Degre() < T2.Degre()){
 				FileBinomiale fb = Reste(F1);
 				fb = UnionFile(fb, F2);
-				return AjoutMin(T1, fb);
+				return fb.AjoutMin(T1);
 			}
 			if (T1.Degre() > T2.Degre()){
 				FileBinomiale fb = Reste(F2);
 				fb = UnionFile(fb, F1);
-				return AjoutMin(T2, fb);
+				return fb.AjoutMin(T2);
 			}
 			if (T1.Degre() == T2.Degre()){
 				FileBinomiale fb1 = Reste(F1);
@@ -110,7 +114,7 @@ namespace algav {
 
 			if (T.Degre() < T1.Degre() && T.Degre() < T2.Degre()){
 				FileBinomiale fb = UnionFile(F1, F2);
-				return AjoutMin(T, fb);
+				return fb.AjoutMin(T);
 			}
 
 			if (T.Degre() == T1.Degre() && T.Degre() == T2.Degre()){
@@ -118,7 +122,7 @@ namespace algav {
 				FileBinomiale fb2 = Reste(F2);
 				TournoiBinomial tb_union = T1.Union2Tid(T2);
 				FileBinomiale fb = UFret(fb1, fb2, tb_union);
-				return AjoutMin(T, fb);
+				return fb.AjoutMin(T);
 			}
 
 			if (T.Degre() == T1.Degre() && T.Degre() < T2.Degre()){
@@ -142,8 +146,22 @@ namespace algav {
 		return UFret(F1, F2, vide);
 	}
 
+	FileBinomiale FileBinomiale::Ajout(Key & k){
+		TournoiBinomial t = TournoiBinomial(&k);
+		FileBinomiale * fb = t.File();
+		return UnionFile(*this, *fb);
+	}
+
+	FileBinomiale FileBinomiale::Construction(std::vector<Key> keys){
+		for (Key & k : keys){
+			Ajout(k);
+		}
+		return *this;
+	}
+
 	size_t FileBinomiale::getSize(){
 		return size;
 	}
+
 
 }
