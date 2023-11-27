@@ -13,8 +13,21 @@ namespace algav {
 		Heap_tree * left;
 		Heap_tree * right;
 		size_t size;
-		Heap_tree * SupprMin_aux();
+		Heap_tree * SupprMin_aux(Heap_tree * parent);
 		void SupprMin_aux2();
+
+		void print_tree(std::ostream & os, const Heap_tree & h, size_t indent) const {
+			for (size_t i = 0; i < indent; ++i) {
+				os << "  ";
+			}
+			os << "| " << std::hex << *h.value << "\n";
+			if (h.left != nullptr) {
+				print_tree(os, *h.left, indent+1);
+			}
+			if (h.right != nullptr) {
+				print_tree(os, *h.right, indent+1);
+			}
+		}
 
 	public:
 		Heap_tree():value(nullptr),left(nullptr),right(nullptr),size(0){}
@@ -34,15 +47,24 @@ namespace algav {
 
 		size_t getSize();
 
-		Heap_tree * getLeft(){
-			return left;
+		friend std::ostream & operator << (std::ostream & os, const Heap_tree & h) {
+			if (h.size == 0) {
+				return os;
+			}
+			h.print_tree(os, h, 0);
+			return os;
 		}
-
-		Heap_tree * getRight(){
-			return right;
-		}
-
-		friend std::ostream & operator << (std::ostream & os, const Heap_tree & h);
+		
+		/*friend std::ostream & operator << (std::ostream & os, const Heap_tree & h){
+			os << std::hex << *h.value << " ";
+			if (h.left != nullptr){
+				os << *h.left; 
+			}
+			if (h.right != nullptr){
+				os << *h.right;
+			}
+			return os;
+		}*/
 
 	};
 

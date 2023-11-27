@@ -156,16 +156,16 @@ int main(int argc, char ** argv) {
 
 	for (size_t i = 0; i < 10; ++i){
 		tt.Ajout(keys[i]);
+	}
 
-		//if (i >= 2) cout << tt << ", left: " << std::hex << *tt.getLeft() << ", right: "<< std::hex << *tt.getRight() << ", " << tt.getSize() << endl;
-		//else cout << tt << endl;
-	}
-	cout<< "avt supp" << tt << ", left: " << std::hex << *tt.getLeft() << ", right: "<< std::hex << *tt.getRight() << ", " << tt.getSize() << endl;
+	cout << tt << endl;
+
 	for (size_t i = 0; i < 10; ++i){
-		tt.SupprMin();
+		Key to_delete = tt.SupprMin();
+		cout << "Delete : " << to_delete << endl;
 		cout << tt << endl;
-//		cout << tt << ", left: " << std::hex << *tt.getLeft() << ", right: "<< std::hex << *tt.getRight() << ", " << tt.getSize() << endl;
 	}
+	
 //	cout << tt.getSize() << endl;
 //	cout << tt << endl;
 //	while (tt.getSize() > 0){

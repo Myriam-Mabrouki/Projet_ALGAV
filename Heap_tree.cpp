@@ -3,68 +3,38 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 namespace algav {
 
-//	void Heap_tree::SupprMin_aux(){
-//	    std::queue<Heap_tree*> q;
-//	    q.push(root);
-//
-//	    // Do level order traversal until last node
-//	    struct Node* temp;
-//	    while (!q.empty()) {
-//	        temp = q.front();
-//	        q.pop();
-//	        if (temp == d_node) {
-//	            temp = NULL;
-//	            delete (d_node);
-//	            return;
-//	        }
-//	        if (temp->right) {
-//	            if (temp->right == d_node) {
-//	                temp->right = NULL;
-//	                delete (d_node);
-//	                return;
-//	            }
-//	            else
-//	                q.push(temp->right);
-//	        }
-//
-//	        if (temp->left) {
-//	            if (temp->left == d_node) {
-//	                temp->left = NULL;
-//	                delete (d_node);
-//	                return;
-//	            }
-//	            else
-//	                q.push(temp->left);
-//	        }
-//	    }
-//	}
-
-	Heap_tree * Heap_tree::SupprMin_aux(){
-		--size;
+	Heap_tree * Heap_tree::SupprMin_aux(Heap_tree * parent){
 		if (left == nullptr || right == nullptr){
-			if (left != nullptr){
-				return left;
-			}
-			else {
-				return this;
-			}
-		}
-		else {
-			int h = std::log2(size); //height of the current tree
-			size_t max_size = std::pow(2,h+1);
+            if (left != nullptr){
+				--size;
+                Heap_tree * tmp = left;
+                left = nullptr;
+                return tmp;
+            }
+            else {
+				Heap_tree * tmp = this;
+                parent->right = nullptr;
+				return tmp;
+            }
+        }
+        else {
+            int h = std::log2(size); //height of the current tree
+            size_t max_size = std::pow(2,h+1);
 
-			if (size + 1 < max_size/2 + (max_size/2)/2){
-				return left->SupprMin_aux();
-			}
-
-			else {
-				return right->SupprMin_aux();
-			}
-		}
-	}
+            if (size < max_size/2 + (max_size/2)/2){
+				--size;
+                return left->SupprMin_aux(this);
+            }
+            else {
+				--size;
+                return right->SupprMin_aux(this);
+            }
+        }
+    }
 
 	void Heap_tree::SupprMin_aux2(){
 		if (left == nullptr || right == nullptr){
@@ -73,7 +43,6 @@ namespace algav {
 			}
 			return;
 		}
-
 		else {
 			if (!value->inf(*left->value) && left->value->inf(*right->value)){
 				std::swap(value, left->value);
@@ -88,23 +57,24 @@ namespace algav {
 				return;
 			}
 		}
-
-
 	}
 
 	Key & Heap_tree::SupprMin(){
 
 		Key & res = *value;
 
-		//Deletion of a Key
-		Heap_tree * to_delete = SupprMin_aux();
-		this->value = to_delete->value;
-//		std::cout << "to_del " << std::hex << *to_delete << std::endl;
-		//delete to_delete;
-		to_delete = nullptr;
+		if (size == 1) {
+			value = nullptr;
+			--size;
+			return res;
+		}
 
+		//Deletion of a Key
+		Heap_tree * to_delete = SupprMin_aux(this);
+		value = to_delete->value;
+		
 		//Finding the right position
-		//SupprMin_aux2();
+		SupprMin_aux2();
 		return res;
 	}
 
@@ -160,19 +130,6 @@ namespace algav {
 
 	size_t Heap_tree::getSize(){
 		return size;
-	}
-
-	std::ostream & operator << (std::ostream & os, const Heap_tree & h){
-		os << "[";
-		os << std::hex << *h.value << ", ";
-//		if (h.left != nullptr){
-//			os <<(h.left); //????? jpp jsp cmt faire oskours
-//		}
-//		if (h.right != nullptr){
-//			os <<(h.right);
-//		}
-		os << "]";
-		return os;
 	}
 
 }
