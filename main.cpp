@@ -151,7 +151,7 @@ int main(int argc, char ** argv) {
 //	cout << "fb : " << fb1 << endl;
 
 
-	Heap_tree tt = Heap_tree();
+	/*Heap_tree tt = Heap_tree();
 	//tt.AjoutsIteratifs(keys);
 
 	for (size_t i = 0; i < 10; ++i){
@@ -164,14 +164,29 @@ int main(int argc, char ** argv) {
 		Key to_delete = tt.SupprMin();
 		cout << "Delete : " << to_delete << endl;
 		cout << tt << endl;
+	}*/
+
+	//tt.AjoutsIteratifs(keys);
+	//cout << tt << endl;
+
+
+	Heap_array h = Heap_array();
+	for (size_t i=0; i<10; i++)  {
+		h.Ajout(keys[i]);
 	}
-	
-//	cout << tt.getSize() << endl;
-//	cout << tt << endl;
-//	while (tt.getSize() > 0){
-//		tt.SupprMin();
-//	}
-//	cout << tt.getSize() << endl;
+	cout << h << endl;
+
+	Heap_array h2 = Heap_array();
+	vector<Key> keys2;
+	for (size_t i=0; i<10; i++)  {
+		keys2.push_back(keys[i]);
+	}
+	h2.Construction(keys2);
+	cout << h2 << endl;
+
+	Heap_tree tt = Heap_tree();
+	tt.Construction(keys2);
+	cout << tt << endl;
 
 	return 0;
 

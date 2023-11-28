@@ -90,6 +90,35 @@ namespace algav {
 			return size;
 		}
 
+		void Heap_array::Construction(std::vector<Key> keys) {
+			for (Key & k : keys){
+				heap.push_back(k);
+			}
+			for (size_t i=keys.size()/2; i>0; i--) {
+				Construction_aux(i-1);
+			}
+		}
+
+		void Heap_array::Construction_aux(size_t i) {
+			size_t left = 2*i;
+			size_t right = 2*i+1;
+			size_t max = i;
+
+			if (left < heap.size() && heap[left].inf(heap[max])) {
+				max = left;
+			}
+			if (right < heap.size() && heap[right].inf(heap[max])) {
+				max = right;
+			}
+
+			if (i != max) {
+				std::swap(heap[i], heap[max]);
+				Construction_aux(max);
+			}
+		}
+
+
+
 		std::ostream & operator << (std::ostream & os, const Heap_array & h){
 			os << "[";
 			for (Key k : h.heap){

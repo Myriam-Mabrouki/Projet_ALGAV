@@ -15,6 +15,7 @@ namespace algav {
 		size_t size;
 		Heap_tree * SupprMin_aux(Heap_tree * parent);
 		void SupprMin_aux2();
+		void Construction_aux(size_t i);
 
 		void print_tree(std::ostream & os, const Heap_tree & h, size_t indent) const {
 			for (size_t i = 0; i < indent; ++i) {
@@ -43,9 +44,11 @@ namespace algav {
 
 		void Ajout(Key & k);
 
-		void AjoutsIteratifs(std::vector<Key> keys);
+		void AjoutsIteratifs(std::vector<Key> & keys);
 
 		size_t getSize();
+
+		void Construction(std::vector<Key> & keys);
 
 		friend std::ostream & operator << (std::ostream & os, const Heap_tree & h) {
 			if (h.size == 0) {

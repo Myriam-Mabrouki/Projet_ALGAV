@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip>
+#include <queue>
 
 namespace algav {
 
@@ -122,7 +123,7 @@ namespace algav {
 
 	}
 
-	void Heap_tree::AjoutsIteratifs(std::vector<Key> keys){
+	void Heap_tree::AjoutsIteratifs(std::vector<Key> & keys){
 		for (Key & k : keys){
 			Ajout(k);
 		}
@@ -130,6 +131,42 @@ namespace algav {
 
 	size_t Heap_tree::getSize(){
 		return size;
+	}
+
+	void Heap_tree::Construction(std::vector<Key> & keys) {
+		if (keys.empty()) {
+            return;
+        }
+
+		value = &keys[0];
+		++size;
+
+		std::queue<Heap_tree*> queue;
+		queue.push(this);
+
+		for (size_t i = 1; i < keys.size(); ++i) {
+            Heap_tree* current = queue.front();
+            queue.pop();
+
+            current->left = new Heap_tree(&keys[i]);
+			++current->size;
+            queue.push(current->left);
+
+            ++i;
+            if (i < keys.size()) {
+                current->right = new Heap_tree(&keys[i]);
+				++current->size;;
+                queue.push(current->right);
+            }
+        }
+
+		for (size_t i=keys.size(); i>0; i--) {
+			Construction_aux(i-1);
+		}
+	}
+
+	void Heap_tree::Construction_aux(size_t i) {
+
 	}
 
 }
