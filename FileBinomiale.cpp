@@ -19,16 +19,15 @@ namespace algav {
 		return size;
 	}
 
-	TournoiBinomial & TournoiBinomial::Union2Tid (TournoiBinomial & T){
+	void TournoiBinomial::Union2Tid (TournoiBinomial & T){
 		if (value->inf(*(T.value))){
 			children.push_back(T);
 			size += T.size;
-			return *this;
 		}
 		else {
-			T.children.push_back(T);
+			T.children.push_back(*this);
 			T.size += size;
-			return T;
+			*this = T;
 		}
 	}
 
@@ -55,108 +54,136 @@ namespace algav {
 		return TournoiBinomial(); // @suppress("Ambiguous problem")
 	}
 
-	FileBinomiale FileBinomiale::Reste(FileBinomiale & F){
-		if (F.size > 0) {
-			F.size -= F.tournois.back().getSize();
-			F.tournois.pop_back();
+	void FileBinomiale::Reste(){
+		if (size > 0) {
+			size -= tournois.back().getSize();
+			tournois.pop_back();
 		}
-		return F;
 	}
 
-	FileBinomiale FileBinomiale::AjoutMin(TournoiBinomial & T){
+	void FileBinomiale::AjoutMin(TournoiBinomial & T){
 		tournois.push_back(T);
 		size += T.getSize();
-		return *this;
 	}
 
-	FileBinomiale FileBinomiale::UFret(FileBinomiale & F1, FileBinomiale & F2, TournoiBinomial & T){
-		if (T.EstVide()){
-			if (F1.EstVide()){
-				return F2;
+	void FileBinomiale::SupprMin(){
+
+		//Search of the minimum key value
+		size_t pos = 0;
+		for (size_t i = 1; i < tournois.size(); ++i){
+			if ((tournois[i].getValue())->inf(*tournois[pos].getValue())){
+				pos = i;
 			}
-			if (F2.EstVide()){
-				return F1;
+		}
+
+		FileBinomiale * F = tournois[pos].Decapite();
+		std::cout << *F << std::endl;
+
+		//Rebuilt the FileBinomiale without the TournoiBinomial at position pos
+		std::vector<TournoiBinomial> new_tournois;
+		for (size_t i = 1; i < tournois.size(); ++i){
+			if (i != pos) new_tournois.push_back(tournois[i]);
+		}
+
+		tournois = new_tournois;
+
+		//UnionFile(*F); 	//TODO ça marche pas pcq qd on appelle la fonction y a plus rien dans l'arg
+		TournoiBinomial vide = TournoiBinomial(); // @suppress("Ambiguous problem")
+		*this = UFret(*F, vide);
+	}
+
+	FileBinomiale & FileBinomiale::UFret(FileBinomiale & F, TournoiBinomial & T){
+		if (T.EstVide()){
+			if (EstVide()){
+				return F;
+			}
+			if (F.EstVide()){
+				return *this;
 			}
 
-			TournoiBinomial T1 = F1.MinDeg();
-			TournoiBinomial T2 = F2.MinDeg();
+			TournoiBinomial T1 = MinDeg();
+			TournoiBinomial T2 = F.MinDeg();
 
 			if (T1.Degre() < T2.Degre()){
-				FileBinomiale fb = Reste(F1);
-				fb = UnionFile(fb, F2);
-				return fb.AjoutMin(T1);
+				Reste();
+				UnionFile(F);
+				AjoutMin(T1);
+				return *this;
 			}
-			if (T1.Degre() > T2.Degre()){
-				FileBinomiale fb = Reste(F2);
-				fb = UnionFile(fb, F1);
-				return fb.AjoutMin(T2);
+			else if (T1.Degre() > T2.Degre()){
+				F.Reste();
+				F.UnionFile(*this);
+				F.AjoutMin(T2);
+				return F;
 			}
-			if (T1.Degre() == T2.Degre()){
-				FileBinomiale fb1 = Reste(F1);
-				FileBinomiale fb2 = Reste(F2);
-				TournoiBinomial tb_union = T1.Union2Tid(T2);
-				return UFret(fb1, fb2, tb_union);
+			else if (T1.Degre() == T2.Degre()){
+				Reste();
+				F.Reste();
+				T1.Union2Tid(T2);
+				return UFret(F, T1);
 			}
 		}
 
 		else {
-			if (F1.EstVide()){
+			if (EstVide()){
 				FileBinomiale * fb = T.File();
-				return UnionFile(*fb, F2);
+				fb->UnionFile(F);
+				return *fb;
 			}
-			if (F2.EstVide()){
+			if (F.EstVide()){
 				FileBinomiale * fb = T.File();
-				return UnionFile(*fb, F1);
+				fb->UnionFile(*this);
+				return *fb;
 			}
 
-			TournoiBinomial T1 = F1.MinDeg();
-			TournoiBinomial T2 = F2.MinDeg();
+			TournoiBinomial T1 = MinDeg();
+			TournoiBinomial T2 = F.MinDeg();
 
 			if (T.Degre() < T1.Degre() && T.Degre() < T2.Degre()){
-				FileBinomiale fb = UnionFile(F1, F2);
-				return fb.AjoutMin(T);
+				UnionFile(F);
+				AjoutMin(T);
+				return *this;
 			}
 
-			if (T.Degre() == T1.Degre() && T.Degre() == T2.Degre()){
-				FileBinomiale fb1 = Reste(F1);
-				FileBinomiale fb2 = Reste(F2);
-				TournoiBinomial tb_union = T1.Union2Tid(T2);
-				FileBinomiale fb = UFret(fb1, fb2, tb_union);
-				return fb.AjoutMin(T);
+			else if (T.Degre() == T1.Degre() && T.Degre() == T2.Degre()){
+				Reste();
+				F.Reste();
+				T1.Union2Tid(T2);
+				FileBinomiale & fb = UFret(F, T1);
+				fb.AjoutMin(T);
+				return fb;
 			}
 
-			if (T.Degre() == T1.Degre() && T.Degre() < T2.Degre()){
-				FileBinomiale fb1 = Reste(F1);
-				TournoiBinomial tb_union = T1.Union2Tid(T2);
-				return UFret(fb1, F2, tb_union);
+			else if (T.Degre() == T1.Degre() && T.Degre() < T2.Degre()){
+				Reste();
+				T1.Union2Tid(T2);
+				return UFret(F, T1);
 			}
 
-			if (T.Degre() < T1.Degre() && T.Degre() == T2.Degre()){
-				FileBinomiale fb2 = Reste(F2);
-				TournoiBinomial tb_union = T1.Union2Tid(T2);
-				return UFret(fb2, F1, tb_union);
+			else if (T.Degre() < T1.Degre() && T.Degre() == T2.Degre()){
+				F.Reste();
+				T1.Union2Tid(T2);
+				return F.UFret(*this, T1);
 			}
 		}
-
 		return *this;
 	}
 
-	FileBinomiale FileBinomiale::UnionFile(FileBinomiale & F1, FileBinomiale & F2){
+	void FileBinomiale::UnionFile(FileBinomiale & F){
 		TournoiBinomial vide = TournoiBinomial(); // @suppress("Ambiguous problem")
-		return UFret(F1, F2, vide);
+		*this = UFret(F, vide);
 	}
 
-	FileBinomiale FileBinomiale::Ajout(Key & k){
+	void FileBinomiale::Ajout(Key & k){
 		TournoiBinomial t = TournoiBinomial(&k);
 		FileBinomiale * fb = t.File();
-		return UnionFile(*this, *fb);
+		UnionFile(*fb);
 	}
 
-	FileBinomiale FileBinomiale::Construction(std::vector<Key> keys){
+	void FileBinomiale::Construction(std::vector<Key> & keys){
 		for (Key & k : keys){
 			Ajout(k);
 		}
-		return *this;
 	}
 
 	size_t FileBinomiale::getSize(){

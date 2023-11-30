@@ -8,7 +8,6 @@ namespace algav {
 
 	class FileBinomiale;
 
-
 	class TournoiBinomial {
 	private:
 		Key * value;
@@ -24,7 +23,7 @@ namespace algav {
 
 		size_t Degre();
 
-		TournoiBinomial & Union2Tid (TournoiBinomial & T);
+		void Union2Tid (TournoiBinomial & T);
 
 		FileBinomiale * Decapite ();
 
@@ -33,6 +32,10 @@ namespace algav {
 		size_t getSize();
 
 		size_t getSize2 () const;
+
+		Key * getValue (){
+			return value;
+		}
 
 	};
 
@@ -48,24 +51,27 @@ namespace algav {
 
 		TournoiBinomial MinDeg();
 
-		FileBinomiale Reste(FileBinomiale & F);
+		void Reste();
 
-		FileBinomiale AjoutMin(TournoiBinomial & T);
+		void AjoutMin(TournoiBinomial & T);
 
-		FileBinomiale UFret(FileBinomiale & F1, FileBinomiale & F2, TournoiBinomial & T);
+		void SupprMin();
 
-		FileBinomiale UnionFile(FileBinomiale & F1, FileBinomiale & F2);
+		FileBinomiale & UFret(FileBinomiale & F, TournoiBinomial & T);
 
-		FileBinomiale Ajout(Key & k);
+		void UnionFile(FileBinomiale & F);
 
-		FileBinomiale Construction(std::vector<Key> keys);
+		void Ajout(Key & k);
+
+		void Construction(std::vector<Key> & keys);
 
 		size_t getSize();
 
 		friend std::ostream & operator << (std::ostream & os, const FileBinomiale & F){
 			os << "<";
-			for (auto & t : F.tournois){
-				os << std::log2(t.getSize2()) << ", ";
+			for (size_t i = 0; i < F.tournois.size(); ++i){
+				os << "TB" << std::log2(F.tournois[i].getSize2());
+				if (i != F.tournois.size()-1) os << ", ";
 			}
 			os << ">";
 			return os;
