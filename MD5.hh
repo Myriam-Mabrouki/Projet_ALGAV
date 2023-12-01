@@ -5,92 +5,138 @@
 #include <cmath>
 #include <iostream>
 #include <string.h>
-
-//Note : Toutes les variables sont sur 32 bits
-#define INT_BITS 32
+#include <iomanip>
+#include "Key.hh"
 
 namespace algav {
 
-	int leftRotate(unsigned n, unsigned d){ //rotate n by d bits
-		return (n << d)|(n >> (INT_BITS - d));
+	typedef union uwb {
+		unsigned w;
+		unsigned char b[4];
+	} MD5union;
+
+	typedef unsigned DigestArray[4];
+
+	static unsigned func0(unsigned abcd[]){
+		return (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
 	}
 
-	void hash (std::string msg){
+	static unsigned func1(unsigned abcd[]){
+		return (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
+	}
 
-		//Définir r comme suit :
-		constexpr std::array<int, 64> r = {{
-			7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,
-			5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
-			6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21
-		}};
+	static unsigned func2(unsigned abcd[]){
+		return  abcd[1] ^ abcd[2] ^ abcd[3];
+	}
 
-		std::array<int, 64> k;
+	static unsigned func3(unsigned abcd[]){
+		return abcd[2] ^ (abcd[1] | ~abcd[3]);
+	}
 
-		//MD5 utilise des sinus d'entiers pour ses constantes :
-		for (size_t i = 0; i < 64; ++i){
-			k[i] = std::floor(std::abs(std::sin(i+1)) * 4294967296 ); // 2^32 = 4294967296
+	typedef unsigned(*DgstFctn)(unsigned a[]);
+
+	static unsigned *calctable(unsigned *k)
+	{
+		double s, pwr;
+		int i;
+
+		pwr = pow(2.0, 32);
+		for (i = 0; i<64; i++) {
+			s = fabs(sin(1.0 + i));
+			k[i] = (unsigned)(s * pwr);
+		}
+		return k;
+	}
+
+	static unsigned rol(unsigned r, short N)
+	{
+		unsigned  mask1 = (1 << N) - 1;
+		return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
+	}
+
+	static std::string MD5Hash(std::string msg)
+	{
+		int mlen = msg.length();
+		static DigestArray h0 = { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476 };
+		static DgstFctn ff[] = { &func0, &func1, &func2, &func3 };
+		static short M[] = { 1, 5, 3, 7 };
+		static short O[] = { 0, 1, 5, 0 };
+		static short rot0[] = { 7, 12, 17, 22 };
+		static short rot1[] = { 5, 9, 14, 20 };
+		static short rot2[] = { 4, 11, 16, 23 };
+		static short rot3[] = { 6, 10, 15, 21 };
+		static short *rots[] = { rot0, rot1, rot2, rot3 };
+		static unsigned kspace[64];
+		static unsigned *k;
+
+		static DigestArray h;
+		DigestArray abcd;
+		DgstFctn fctn;
+		short m, o, g;
+		unsigned f;
+		short *rotn;
+		union {
+			unsigned w[16];
+			char     b[64];
+		}mm;
+		int os = 0;
+		int grp, grps, q, p;
+		unsigned char *msg2;
+
+		if (k == NULL) k = calctable(kspace);
+
+		for (q = 0; q<4; q++) h[q] = h0[q];
+
+		{
+			grps = 1 + (mlen + 8) / 64;
+			msg2 = (unsigned char*)malloc(64 * grps);
+			memcpy(msg2, msg.c_str(), mlen);
+			msg2[mlen] = (unsigned char)0x80;
+			q = mlen + 1;
+			while (q < 64 * grps){ msg2[q] = 0; q++; }
+			{
+				MD5union u;
+				u.w = 8 * mlen;
+				q -= 8;
+				memcpy(msg2 + q, &u.w, 4);
+			}
 		}
 
+		for (grp = 0; grp<grps; grp++)
+		{
+			memcpy(mm.b, msg2 + os, 64);
+			for (q = 0; q<4; q++) abcd[q] = h[q];
+			for (p = 0; p<4; p++) {
+				fctn = ff[p];
+				rotn = rots[p];
+				m = M[p]; o = O[p];
+				for (q = 0; q<16; q++) {
+					g = (m*q + o) % 16;
+					f = abcd[1] + rol(abcd[0] + fctn(abcd) + k[q + 16 * p] + mm.w[g], rotn[q % 4]);
 
-		//Préparation des variables :
-		int h0 = std::stoi("67452301", 0, 16);
-		int h1 = std::stoi("EFCDAB89", 0, 16);
-		int h2 = std::stoi("98BADCFE", 0, 16);
-		int h3 = std::stoi("10325476", 0, 16);
-//
-//		//Préparation du message (padding) :
-		//int msg_int = std::stoi(msg, 0, 16) + 0b1;
-//		ajouter le bit "1" au message
-//		ajouter le bit "0" jusqu'à ce que la taille du message en bits soit égale à 448 (mod 512)
-//		ajouter la taille du message initial(avant le padding) codée en 64-bit little-endian au message
-//
-//		//Découpage en blocs de 512 bits :
-//		pour chaque bloc de 512 bits du message
-//			subdiviser en 16 mots de 32 bits en little-endian w[i], 0 ≤ i ≤ 15
-//
-			//initialiser les valeurs de hachage :
-			int a = h0;
-			int b = h1;
-			int c = h2;
-			int d = h3;
-
-			int f;
-			int g;
-
-			//Boucle principale :
-			for (size_t i = 0; i < 64; ++i){
-				if (0 <= i && i <= 15){
-					  f = (b & c) | ((~ b) & d);
-					  g = i;
+					abcd[0] = abcd[3];
+					abcd[3] = abcd[2];
+					abcd[2] = abcd[1];
+					abcd[1] = f;
 				}
-				else if (16 <= i && i <= 31){
-					  f = (d & b) | ((~ d) & c);
-					  g = (5*i + 1) % 16;
-				}
-				else if (32 <= i && i <= 47){
-					  f = b ^ c ^ d;
-					  g = (3*i + 5) % 16;
-				}
-				else if (48 <= i && i <= 63){
-					f = c ^ (b | (~ d));
-					g = (7*i) % 16;
-				}
-				int temp = d;
-				d = c;
-				c = b;
-				b = leftRotate((a + f + k[i] + w[g]), r[i]) + b;
-				a = temp;
 			}
+			for (p = 0; p<4; p++)
+				h[p] += abcd[p];
+			os += 64;
+		}
 
-			//ajouter le résultat au bloc précédent :
-			h0 = h0 + a;
-			h1 = h1 + b;
-			h2 = h2 + c;
-			h3 = h3 + d;
-//		}
-//
-//		int empreinte = h0 concaténer h1 concaténer h2 concaténer h3
+		std::string str;
+		MD5union uu;
+		for (int j = 0; j<4; j++){
+			uu.w = h[j];
+			char s[9];
+			sprintf(s, "%02x%02x%02x%02x", uu.b[0], uu.b[1], uu.b[2], uu.b[3]);
+			str += s;
+		}
 
+		return str;
 	}
 
 }
+
+
