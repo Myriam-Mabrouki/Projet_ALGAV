@@ -16,7 +16,7 @@ namespace algav {
 	public:
 		Heap_array():size(0){}
 
-		Key & SupprMin();
+		Key SupprMin();
 
 		void Ajout(Key & k);
 
@@ -25,6 +25,8 @@ namespace algav {
 		size_t getSize();
 
 		void Construction(std::vector<Key> keys);
+
+		Heap_array & Union (Heap_array & h);
 
 		friend std::ostream & operator << (std::ostream & os, const Heap_array & h);
 

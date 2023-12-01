@@ -6,20 +6,19 @@
 
 namespace algav {
 
-		Key & Heap_array::SupprMin(){
+		Key Heap_array::SupprMin(){
 
 			if (size == 0){
 				exit(1);
 			}
 
 			//Deletion of the minimum
-			Key & to_delete = heap[0];
+			Key to_delete = heap[0];
 			heap[0] = heap[heap.size()-1];
 			heap.pop_back();
 			--size;
 
 			size_t pos = 0;
-
 
 			while (2 * pos + 1 < size){
 
@@ -93,6 +92,7 @@ namespace algav {
 		void Heap_array::Construction(std::vector<Key> keys) {
 			for (Key & k : keys){
 				heap.push_back(k);
+				++size;
 			}
 			for (size_t i=keys.size()/2; i>0; i--) {
 				Construction_aux(i-1);
@@ -117,6 +117,24 @@ namespace algav {
 			}
 		}
 
+		Heap_array & Heap_array::Union (Heap_array & h) {
+			std::vector<Key> result;
+			result.reserve(size + h.size);
+			size_t tmp = size + h.size;
+
+			while (!heap.empty() || !h.heap.empty()) {
+				if (!heap.empty() && heap[0].inf(h.heap[0])) {
+					result.push_back(SupprMin());
+				} else {
+					result.push_back(h.SupprMin());
+				}
+			}
+
+			heap = result;
+			size = tmp;
+
+			return *this;
+		}
 
 
 		std::ostream & operator << (std::ostream & os, const Heap_array & h){
@@ -125,7 +143,7 @@ namespace algav {
 				os << std::hex << k << ", ";
 			}
 			os << "]";
-			return os;
+			return os << std::dec;
 		}
 
 }

@@ -55,7 +55,7 @@ namespace algav {
 				return os;
 			}
 			h.print_tree(os, h, 0);
-			return os;
+			return os << std::dec;
 		}
 		
 		/*friend std::ostream & operator << (std::ostream & os, const Heap_tree & h){
@@ -66,7 +66,7 @@ namespace algav {
 			if (h.right != nullptr){
 				os << *h.right;
 			}
-			return os;
+			return os << std::dec;
 		}*/
 
 	};

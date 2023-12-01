@@ -15,7 +15,7 @@ namespace algav {
 		return size;
 	}
 
-	size_t TournoiBinomial::getSize2() const{
+	size_t TournoiBinomial::getSize() const {
 		return size;
 	}
 
@@ -51,7 +51,7 @@ namespace algav {
 
 	TournoiBinomial FileBinomiale::MinDeg(){
 		if (size > 0) return tournois.back();
-		return TournoiBinomial(); // @suppress("Ambiguous problem")
+		return TournoiBinomial();
 	}
 
 	void FileBinomiale::Reste(){
@@ -76,24 +76,20 @@ namespace algav {
 			}
 		}
 
+		std::cout << "  Min detected in TB" << std::log2(tournois[pos].getSize()) << std::endl;
 		FileBinomiale * F = tournois[pos].Decapite();
-		std::cout << *F << std::endl;
+		std::cout << "  Decapitation : " << *F << std::endl;
 
-		//Rebuilt the FileBinomiale without the TournoiBinomial at position pos
-		std::vector<TournoiBinomial> new_tournois;
-		for (size_t i = 1; i < tournois.size(); ++i){
-			if (i != pos) new_tournois.push_back(tournois[i]);
-		}
-
-		tournois = new_tournois;
-
-		//UnionFile(*F); 	//TODO ça marche pas pcq qd on appelle la fonction y a plus rien dans l'arg
-		TournoiBinomial vide = TournoiBinomial(); // @suppress("Ambiguous problem")
-		*this = UFret(*F, vide);
+		//Erase tournois in position pos
+		size -= tournois[pos].getSize();
+		tournois.erase(tournois.begin()+pos);
+		
+		//Add reste
+		UnionFile(*F);
 	}
 
 	FileBinomiale & FileBinomiale::UFret(FileBinomiale & F, TournoiBinomial & T){
-		if (T.EstVide()){
+		if (T.EstVide()) {
 			if (EstVide()){
 				return F;
 			}
@@ -103,7 +99,6 @@ namespace algav {
 
 			TournoiBinomial T1 = MinDeg();
 			TournoiBinomial T2 = F.MinDeg();
-
 			if (T1.Degre() < T2.Degre()){
 				Reste();
 				UnionFile(F);
@@ -123,7 +118,6 @@ namespace algav {
 				return UFret(F, T1);
 			}
 		}
-
 		else {
 			if (EstVide()){
 				FileBinomiale * fb = T.File();
@@ -138,13 +132,11 @@ namespace algav {
 
 			TournoiBinomial T1 = MinDeg();
 			TournoiBinomial T2 = F.MinDeg();
-
 			if (T.Degre() < T1.Degre() && T.Degre() < T2.Degre()){
 				UnionFile(F);
 				AjoutMin(T);
 				return *this;
 			}
-
 			else if (T.Degre() == T1.Degre() && T.Degre() == T2.Degre()){
 				Reste();
 				F.Reste();
@@ -153,24 +145,22 @@ namespace algav {
 				fb.AjoutMin(T);
 				return fb;
 			}
-
 			else if (T.Degre() == T1.Degre() && T.Degre() < T2.Degre()){
 				Reste();
-				T1.Union2Tid(T2);
+				T1.Union2Tid(T);
 				return UFret(F, T1);
 			}
-
-			else if (T.Degre() < T1.Degre() && T.Degre() == T2.Degre()){
+			else if (T.Degre() == T2.Degre() && T.Degre() < T1.Degre()){;
 				F.Reste();
-				T1.Union2Tid(T2);
-				return F.UFret(*this, T1);
+				T2.Union2Tid(T);
+				return F.UFret(*this, T2);
 			}
 		}
 		return *this;
 	}
 
 	void FileBinomiale::UnionFile(FileBinomiale & F){
-		TournoiBinomial vide = TournoiBinomial(); // @suppress("Ambiguous problem")
+		TournoiBinomial vide = TournoiBinomial(); 
 		*this = UFret(F, vide);
 	}
 

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,33 +17,17 @@ namespace algav {
 	public:
 		Key(std::string hex){
 			hex = hex.substr(2, hex.size());
+			while (hex.size() < 32) {
+				hex.insert(0, "0");
+			}
 			std::string tmp;
-			size_t i;
-			for (i = 0; i < 4; ++i){
-				if (hex.size() < 8) {
-					break;
-				}
+			for (size_t i = 0; i < 4; ++i){
 				tmp = hex.substr(0, 8);
 				hex = hex.substr(8, hex.size());
 				unsigned long value;
 				std::istringstream iss(tmp);
 				iss >> std::hex >> value;
 				key.emplace_back(value);
-			}
-
-			for (size_t j = i; j < 4; ++j){
-
-				if (hex.size() > 0){
-					tmp = hex;
-					unsigned long value;
-					std::istringstream iss(tmp);
-					iss >> std::hex >> value;
-					key.emplace_back(value);
-					hex = hex.substr(0,0);
-				}
-				else {
-					key.insert(key.begin(), 0);
-				}
 			}
 		}
 
@@ -62,10 +47,17 @@ namespace algav {
 
 		friend std::ostream & operator << (std::ostream & os, const Key & k){
 			os << "0x";
+
 			for (size_t i = 0; i < 4; ++i){
-				os << std::hex << k.key[i];
+				std::ostringstream tmp;
+				tmp << std::hex << k.key[i];
+				std::string s = tmp.str();
+				while (s.size() < 8) {
+					s.insert(0, "0");
+				}
+				os << s;
 			}
-			return os;
+			return os << std::dec;
 		}
 
 

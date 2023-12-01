@@ -31,7 +31,7 @@ namespace algav {
 
 		size_t getSize();
 
-		size_t getSize2 () const;
+		size_t getSize () const;
 
 		Key * getValue (){
 			return value;
@@ -70,7 +70,7 @@ namespace algav {
 		friend std::ostream & operator << (std::ostream & os, const FileBinomiale & F){
 			os << "<";
 			for (size_t i = 0; i < F.tournois.size(); ++i){
-				os << "TB" << std::log2(F.tournois[i].getSize2());
+				os << "TB" << std::log2(F.tournois[i].getSize());
 				if (i != F.tournois.size()-1) os << ", ";
 			}
 			os << ">";
