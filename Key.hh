@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 #include <string>
 #include <iomanip>
 #include <iostream>
@@ -12,14 +12,18 @@ namespace algav {
 	class Key {
 
 	private:
-		std::vector<unsigned long> key;
+		std::array<unsigned long,4> key;
 
 	public:
 		Key(std::string hex){
 			hex = hex.substr(2, hex.size());
+
+			//If the string is not 32 hex long (thus, not 128 bits long)
 			while (hex.size() < 32) {
 				hex.insert(0, "0");
 			}
+
+
 			std::string tmp;
 			for (size_t i = 0; i < 4; ++i){
 				tmp = hex.substr(0, 8);
@@ -27,7 +31,7 @@ namespace algav {
 				unsigned long value;
 				std::istringstream iss(tmp);
 				iss >> std::hex >> value;
-				key.emplace_back(value);
+				key[i]=value;
 			}
 		}
 
