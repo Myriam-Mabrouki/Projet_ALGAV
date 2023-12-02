@@ -181,15 +181,6 @@ int main(int argc, char ** argv) {
 	}
 
 
-	cout << "Contruction of FileBinomiale of " << file << "..." << endl;
-	FileBinomiale f = FileBinomiale();
-	auto debut = chrono::high_resolution_clock::now();
-	f.Construction(keys);
-	auto fin = chrono::high_resolution_clock::now();
-	auto duree = chrono::duration_cast<chrono::milliseconds>(fin - debut);
-	cout << "Durée : " << duree.count() << "milliseconds" << endl;
-
-
 
 	cout << endl << "========== TEST BINARY_SEARCH_TREE ==========" << endl << endl;
 
@@ -200,7 +191,17 @@ int main(int argc, char ** argv) {
 	}
 
 	cout << "Size : " << bst1.getSize() << endl;
-	cout << bst1 << endl;
+	cout << bst1 << endl << endl;
+
+
+
+	cout << "Contruction of FileBinomiale of " << file << "..." << endl;
+	FileBinomiale f = FileBinomiale();
+	auto debut = chrono::high_resolution_clock::now();
+	f.Construction(keys);
+	auto fin = chrono::high_resolution_clock::now();
+	auto duree = chrono::duration_cast<chrono::milliseconds>(fin - debut);
+	cout << "Durée : " << duree.count() << " milliseconds" << endl;
 
 
 
