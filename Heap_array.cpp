@@ -26,11 +26,11 @@ namespace algav {
 				Key & left = heap[2*pos+1];
 
 				//No right child
-				if (2 * pos + 2 > size){
+				if (2 * pos + 2 >= size){
 					if (left.inf(current)){
-						std::swap(left,current);
-						break;
+						std::swap(left,current);						
 					}
+					break;
 				}
 
 				//There are two children
@@ -122,8 +122,8 @@ namespace algav {
 			result.reserve(size + h.size);
 			size_t tmp = size + h.size;
 
-			while (!heap.empty() || !h.heap.empty()) {
-				if (!heap.empty() && heap[0].inf(h.heap[0])) {
+			while (size != 0 || h.size != 0) {
+				if (h.size == 0 || (size != 0 && heap[0].inf(h.heap[0]))) {
 					result.push_back(SupprMin());
 				} else {
 					result.push_back(h.SupprMin());
@@ -132,15 +132,16 @@ namespace algav {
 
 			heap = result;
 			size = tmp;
-
 			return *this;
 		}
 
 
 		std::ostream & operator << (std::ostream & os, const Heap_array & h){
 			os << "[";
-			for (Key k : h.heap){
-				os << std::hex << k << ", ";
+			for (size_t i = 0; i < h.size; ++i) {
+				os << std::hex << h.heap[i];
+				if (i != h.size-1)
+					os << ", "; 
 			}
 			os << "]";
 			return os << std::dec;

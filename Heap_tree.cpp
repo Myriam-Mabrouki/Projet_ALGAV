@@ -60,23 +60,24 @@ namespace algav {
 		}
 	}
 
-	Key & Heap_tree::SupprMin(){
+	Key Heap_tree::SupprMin(){
 
-		Key & res = *value;
+		Key * res = value;
 
 		if (size == 1) {
 			value = nullptr;
 			--size;
-			return res;
+			return *res;
 		}
 
 		//Deletion of a Key
 		Heap_tree * to_delete = SupprMin_aux(this);
 		value = to_delete->value;
+		delete to_delete;
 		
 		//Finding the right position
 		SupprMin_aux2();
-		return res;
+		return *res;
 	}
 
 	void Heap_tree::Ajout(Key & k){

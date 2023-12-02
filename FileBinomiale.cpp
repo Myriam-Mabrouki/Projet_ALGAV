@@ -31,17 +31,17 @@ namespace algav {
 		}
 	}
 
-	FileBinomiale * TournoiBinomial::Decapite (){
-		FileBinomiale * fb = new FileBinomiale();
+	FileBinomiale TournoiBinomial::Decapite (){
+		FileBinomiale fb = FileBinomiale();
 		for (auto it = children.rbegin(); it != children.rend(); ++it){
-			fb->AjoutMin(*it);
+			fb.AjoutMin(*it);
 		}
 		return fb;
 	}
 
-	FileBinomiale * TournoiBinomial::File (){
-		FileBinomiale * fb = new FileBinomiale();
-		fb->AjoutMin(*this);
+	FileBinomiale TournoiBinomial::File (){
+		FileBinomiale fb = FileBinomiale();
+		fb.AjoutMin(*this);
 		return fb;
 	}
 
@@ -77,18 +77,18 @@ namespace algav {
 		}
 
 		std::cout << "  Min detected in TB" << std::log2(tournois[pos].getSize()) << std::endl;
-		FileBinomiale * F = tournois[pos].Decapite();
-		std::cout << "  Decapitation : " << *F << std::endl;
+		FileBinomiale F = tournois[pos].Decapite();
+		std::cout << "  Decapitation : " << F << std::endl;
 
 		//Erase tournois in position pos
 		size -= tournois[pos].getSize();
 		tournois.erase(tournois.begin()+pos);
 		
 		//Add reste
-		UnionFile(*F);
+		UnionFile(F);
 	}
 
-	FileBinomiale & FileBinomiale::UFret(FileBinomiale & F, TournoiBinomial & T){
+	FileBinomiale FileBinomiale::UFret(FileBinomiale & F, TournoiBinomial & T){
 		if (T.EstVide()) {
 			if (EstVide()){
 				return F;
@@ -120,14 +120,14 @@ namespace algav {
 		}
 		else {
 			if (EstVide()){
-				FileBinomiale * fb = T.File();
-				fb->UnionFile(F);
-				return *fb;
+				FileBinomiale fb = T.File();
+				fb.UnionFile(F);
+				return fb;
 			}
 			if (F.EstVide()){
-				FileBinomiale * fb = T.File();
-				fb->UnionFile(*this);
-				return *fb;
+				FileBinomiale fb = T.File();
+				fb.UnionFile(*this);
+				return fb;
 			}
 
 			TournoiBinomial T1 = MinDeg();
@@ -141,7 +141,7 @@ namespace algav {
 				Reste();
 				F.Reste();
 				T1.Union2Tid(T2);
-				FileBinomiale & fb = UFret(F, T1);
+				FileBinomiale fb = UFret(F, T1);
 				fb.AjoutMin(T);
 				return fb;
 			}
@@ -166,8 +166,8 @@ namespace algav {
 
 	void FileBinomiale::Ajout(Key & k){
 		TournoiBinomial t = TournoiBinomial(&k);
-		FileBinomiale * fb = t.File();
-		UnionFile(*fb);
+		FileBinomiale fb = t.File();
+		UnionFile(fb);
 	}
 
 	void FileBinomiale::Construction(std::vector<Key> & keys){

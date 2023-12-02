@@ -2,25 +2,35 @@
 
 namespace algav {
 
-	BinarySearchTree * BinarySearchTree::Insert(BinarySearchTree * root, Key & value){
+	void BinarySearchTree::Insert(Key & v){
 
-	    if (!root) {
-	        // Insert the first node, if root is NULL.
-	        return new BinarySearchTree(&value);
+	    if (size == 0) {
+	        value = &v;
+			size = 1;
+			return;
 	    }
-
-	    ++size;
 
 	    // Insert data.
-	    if (root->value->inf(value)) {
-	        root->right = Insert(root->right, value);
+	    if (v.inf(*value)) {
+			if (left == nullptr) {
+				left = new BinarySearchTree(&v);
+			} else {
+				left->Insert(v);
+			}
 	    }
-	    else if (value.inf(*root->value)) {
-	        root->left = Insert(root->left, value);
+	    else {
+	        if (right == nullptr) {
+				right = new BinarySearchTree(&v);
+			} else {
+				right->Insert(v);
+			}
 	    }
 
-	    // Return 'root' node, after insertion.
-	    return root;
+		size = 1;
+		if (left != nullptr)
+			size += left->size;
+		if (right != nullptr)
+			size += right->size;
 	}
 
 }

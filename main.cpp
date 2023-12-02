@@ -2,6 +2,7 @@
 #include "Heap_tree.hh"
 #include "Heap_array.hh"
 #include "FileBinomiale.hh"
+#include "BinarySearchTree.hh"
 
 #include <string>
 #include <iostream>
@@ -44,8 +45,6 @@ int main(int argc, char ** argv) {
 	string file = argv[1];
 	vector<Key> keys = readKeysFromFile(file);
 
-
-
 	vector<Key> keys1;	
 	for (size_t i=0; i<5; i++)  {
 		keys1.push_back(keys[i]);
@@ -77,7 +76,7 @@ int main(int argc, char ** argv) {
 
 
 	
-	cout << endl << "========== TEST HEAP_ARRAY ==========" << endl << endl;
+	/*cout << endl << "========== TEST HEAP_ARRAY ==========" << endl << endl;
 
 	
 	Heap_array h1 = Heap_array();
@@ -94,7 +93,7 @@ int main(int argc, char ** argv) {
 	while (h1.getSize() != 0) {
 		cout << "DELETE MIN : " << h1.SupprMin() << endl;
 		cout << h1 << endl << endl;
-	}
+	}*/
 
 
 
@@ -106,7 +105,7 @@ int main(int argc, char ** argv) {
 
 	/*Heap_tree tt2 = Heap_tree();
 	tt2.Construction(keys2);
-	cout << "tt2 with the size of " << tt2.getSize() << " : " << endl << tt2 << endl*/
+	cout << "tt2 with the size of " << tt2.getSize() << " : " << endl << tt2 << endl;*/
 
 	while (tt1.getSize() != 0) {
 		cout << "DELETE MIN : " << tt1.SupprMin() << endl;
@@ -133,8 +132,8 @@ int main(int argc, char ** argv) {
 	cout << "Size tb3 : " << tb3.getSize() << ", degré : " << tb3.Degre() << endl;
 	cout << "Size tb4 : " << tb4.getSize() << ", degré : " << tb4.Degre() << endl << endl;
 
-	FileBinomiale * fb = tb1.Decapite();
-	cout << "Decapitation de tb1 : " << *fb << ", size : " << fb->getSize() << endl << endl;
+	FileBinomiale fb = tb1.Decapite();
+	cout << "Decapitation de tb1 : " << fb << ", size : " << fb.getSize() << endl << endl;
 
 	FileBinomiale fb1 = FileBinomiale();
 	cout << "fb1 vide : " << fb1 << ", size : " << fb1.getSize()  << endl;
@@ -182,13 +181,35 @@ int main(int argc, char ** argv) {
 	}
 
 
+	cout << "Contruction of FileBinomiale of " << file << "..." << endl;
+	FileBinomiale f = FileBinomiale();
+	auto debut = chrono::high_resolution_clock::now();
+	f.Construction(keys);
+	auto fin = chrono::high_resolution_clock::now();
+	auto duree = chrono::duration_cast<chrono::milliseconds>(fin - debut);
+	cout << "Durée : " << duree.count() << "milliseconds" << endl;
+
+
+
+	cout << endl << "========== TEST BINARY_SEARCH_TREE ==========" << endl << endl;
+
+	BinarySearchTree bst1 = BinarySearchTree();
+
+	for (Key & k : keys2) {
+		bst1.Insert(k);
+	}
+
+	cout << "Size : " << bst1.getSize() << endl;
+	cout << bst1 << endl;
+
+
 
 	cout << endl << "========== MEASURING COMPLEXITIES ==========" << endl << endl;
 
 	std::string chemin = "cles_alea/";
 	std::string filename;
 
-	int tab[] = {1000, 5000/*, 10000, 20000, 50000, 80000, 120000, 200000*/};
+	int tab[] = {1000, 5000, 10000, 20000/*, 50000, 80000, 120000, 200000*/};
 
 	/*cout << "Heap array..." << endl;
 	std::ofstream file_heap_array("complexity_heap_array.txt");
@@ -199,6 +220,7 @@ int main(int argc, char ** argv) {
 
 		for (int j = 1; j <= 5; j++) {
 			filename = chemin + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
 			vector<Key> keys = readKeysFromFile(filename);
 
 			Heap_array h1 = Heap_array();
@@ -223,7 +245,8 @@ int main(int argc, char ** argv) {
 
     }*/
 
-	cout << "File Binomiale..." << endl;
+
+	/*cout << "File Binomiale..." << endl;
 	std::ofstream file_file_binomiale("complexity_file_binomiale.txt");
 	for (int i : tab) {
 
@@ -231,6 +254,7 @@ int main(int argc, char ** argv) {
 
 		for (int j = 1; j <= 5; j++) {
 			filename = chemin + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
 			vector<Key> keys = readKeysFromFile(filename);
 
 			FileBinomiale f = FileBinomiale();
@@ -245,7 +269,7 @@ int main(int argc, char ** argv) {
 		moyenne /= 5;
         file_file_binomiale << i << " " << moyenne << endl;
 
-    }
+    }*/
 
 	return 0;
 

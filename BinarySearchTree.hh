@@ -20,10 +20,20 @@ namespace algav {
 			os << "| " << std::hex << *bst.value << "\n";
 			if (bst.left != nullptr) {
 				print_tree(os, *bst.left, indent+1);
-			}
+			} else {
+				for (size_t i = 0; i < indent + 1; ++i) {
+					os << "  ";
+				}
+				os << "| _" << "\n";
+			} 
 			if (bst.right != nullptr) {
 				print_tree(os, *bst.right, indent+1);
-			}
+			} else {
+				for (size_t i = 0; i < indent + 1; ++i) {
+					os << "  ";
+				}
+				os << "| _" << "\n";
+			} 
 		}
 
 	public:
@@ -31,7 +41,16 @@ namespace algav {
 
 		BinarySearchTree(Key * value):value(value),left(nullptr),right(nullptr),size(1){}
 
-		BinarySearchTree * Insert(BinarySearchTree * root, Key & value);
+		~BinarySearchTree(){
+			delete left;
+			delete right;
+		}
+
+		size_t getSize(){
+			return size;
+		}
+
+		void Insert(Key & v);
 
 		friend std::ostream & operator << (std::ostream & os, const BinarySearchTree & bst) {
 			if (bst.size == 0) {

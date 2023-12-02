@@ -38,9 +38,11 @@ namespace algav {
 		Heap_tree(Key * value, Heap_tree * left, Heap_tree * right):value(value),left(left),right(right),size(1){}
 
 		~Heap_tree(){
+			delete left;
+			delete right;
 		}
 
-		Key & SupprMin();
+		Key SupprMin();
 
 		void Ajout(Key & k);
 

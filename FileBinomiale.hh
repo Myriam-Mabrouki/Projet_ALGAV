@@ -25,9 +25,9 @@ namespace algav {
 
 		void Union2Tid (TournoiBinomial & T);
 
-		FileBinomiale * Decapite ();
+		FileBinomiale Decapite ();
 
-		FileBinomiale * File ();
+		FileBinomiale File ();
 
 		size_t getSize();
 
@@ -57,7 +57,7 @@ namespace algav {
 
 		void SupprMin();
 
-		FileBinomiale & UFret(FileBinomiale & F, TournoiBinomial & T);
+		FileBinomiale UFret(FileBinomiale & F, TournoiBinomial & T);
 
 		void UnionFile(FileBinomiale & F);
 
