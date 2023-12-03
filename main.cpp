@@ -2,6 +2,7 @@
 #include "Heap_tree.hh"
 #include "Heap_array.hh"
 #include "FileBinomiale.hh"
+#include "MD5.hh"
 #include "BinarySearchTree.hh"
 
 #include <string>
@@ -10,6 +11,9 @@
 #include <sstream>
 #include <vector>
 #include <chrono>
+#include <unordered_set>
+#include <filesystem>
+
 
 using namespace algav;
 using namespace std;
@@ -34,6 +38,27 @@ vector<Key> readKeysFromFile(const std::string& filepath) {
 
     return keys;
 }
+
+vector<string> readStringsFromFile(const std::string& filepath) {
+    std::ifstream file(filepath);
+    std::string line;
+    std::vector<std::string> words;
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filepath << std::endl;
+        return words;
+    }
+
+    // Read key from the file one by one
+    while (file >> line) {
+    	words.emplace_back(line);
+    }
+
+    file.close();
+
+    return words;
+}
+
 
 int main(int argc, char ** argv) {
 
@@ -181,6 +206,17 @@ int main(int argc, char ** argv) {
 	}
 
 
+	cout << endl << "========== TEST MD5 ==========" << endl << endl;
+
+	string md5_1 = MD5Hash("");
+	string md5_2 = MD5Hash("The quick brown fox jumps over the lazy dog");
+	string md5_3 = MD5Hash("The quick brown fox jumps over the lazy dog.");
+	string md5_4 = MD5Hash("Et l’unique cordeau des trompettes marines");
+	string md5_5 = MD5Hash("Et l’unique cordeau des trompettes marinEs");
+
+	cout << md5_1 << endl << md5_2 << endl << md5_3 << endl << md5_4 << endl << md5_5 << endl;
+
+
 
 	cout << endl << "========== TEST BINARY_SEARCH_TREE ==========" << endl << endl;
 
@@ -207,7 +243,7 @@ int main(int argc, char ** argv) {
 
 	cout << endl << "========== MEASURING COMPLEXITIES ==========" << endl << endl;
 
-	std::string chemin = "cles_alea/";
+	std::string path = "cles_alea/";
 	std::string filename;
 
 	int tab[] = {1000, 5000, 10000, 20000/*, 50000, 80000, 120000, 200000*/};
@@ -271,6 +307,39 @@ int main(int argc, char ** argv) {
         file_file_binomiale << i << " " << moyenne << endl;
 
     }*/
+
+	cout << endl << "========== EXPERIMENTAL STUDY ==========" << endl << endl;
+
+	path = "Shakespeare/";
+
+	vector<vector<string>> shakespeare_works;
+
+	//Browse Shakespeare directory
+	for (const auto& file : filesystem::directory_iterator(path)){
+		//Add all the words encountered in one book
+		shakespeare_works.push_back(readStringsFromFile(file.path()));
+	}
+
+	vector<string> hash_shakespeare;
+	unordered_set<string> words_shakespeare;
+	for (auto v : shakespeare_works){
+		for (string s : v){
+			hash_shakespeare.push_back(MD5Hash(s));
+			words_shakespeare.insert(s);
+		}
+	}
+
+
+	vector<Key> hash_keys;
+	for (string h : words_shakespeare){
+		hash_keys.push_back(Key(h));
+	}
+
+
+//	BinarySearchTree BST_MD5 = BinarySearchTree();
+//	for (Key k : hash_keys){
+//		BST_MD5.Insert(k);
+//	}
 
 	return 0;
 
