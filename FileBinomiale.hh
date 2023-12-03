@@ -2,6 +2,7 @@
 
 #include "Key.hh"
 #include <vector>
+#include <list>
 #include <cmath>
 
 namespace algav {
@@ -76,6 +77,9 @@ namespace algav {
 			os << ">";
 			return os;
 		}
+
+		void Reserve(size_t length);
+
 
 	};
 

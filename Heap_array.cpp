@@ -90,6 +90,7 @@ namespace algav {
 		}
 
 		void Heap_array::Construction(std::vector<Key> keys) {
+			heap.reserve(keys.size());
 			for (Key & k : keys){
 				heap.push_back(k);
 				++size;

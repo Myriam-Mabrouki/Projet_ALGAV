@@ -246,7 +246,7 @@ int main(int argc, char ** argv) {
 	std::string path = "cles_alea/";
 	std::string filename;
 
-	int tab[] = {1000, 5000, 10000, 20000/*, 50000, 80000, 120000, 200000*/};
+	int tab[] = {1000, 5000, 10000, 20000, 50000, 80000, 120000, 200000};
 
 	/*cout << "Heap array..." << endl;
 	std::ofstream file_heap_array("complexity_heap_array.txt");
@@ -279,6 +279,41 @@ int main(int argc, char ** argv) {
 		moyenne_ajout /= 5;
 		moyenne_constr /= 5;
         file_heap_array << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
+
+    }*/
+
+
+	/*cout << "Heap tree..." << endl;
+	std::ofstream file_heap_tree("complexity_heap_tree.txt");
+	for (int i : tab) {
+
+		float moyenne_ajout = 0;
+		float moyenne_constr = 0;
+
+		for (int j = 1; j <= 5; j++) {
+			filename = chemin + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
+			vector<Key> keys = readKeysFromFile(filename);
+
+			Heap_tree h1 = Heap_tree();
+			auto begin_ajout = chrono::high_resolution_clock::now();
+			h1.AjoutsIteratifs(keys);
+			auto end_ajout = chrono::high_resolution_clock::now();
+			auto duree_ajout = chrono::duration_cast<chrono::milliseconds>(end_ajout - begin_ajout);
+
+			//Heap_tree h2 = Heap_tree();
+			//auto begin_constr = chrono::high_resolution_clock::now();
+			//h2.Construction(keys);
+			//auto end_constr = chrono::high_resolution_clock::now();
+			//auto duree_constr = chrono::duration_cast<chrono::milliseconds>(end_constr - begin_constr);
+
+			moyenne_ajout += duree_ajout.count();
+			//moyenne_constr += duree_constr.count();
+		}
+
+		moyenne_ajout /= 5;
+		//moyenne_constr /= 5;
+        file_heap_tree << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
 
     }*/
 

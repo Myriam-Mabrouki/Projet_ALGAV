@@ -33,6 +33,7 @@ namespace algav {
 
 	FileBinomiale TournoiBinomial::Decapite (){
 		FileBinomiale fb = FileBinomiale();
+		fb.Reserve(children.size());
 		for (auto it = children.rbegin(); it != children.rend(); ++it){
 			fb.AjoutMin(*it);
 		}
@@ -62,7 +63,7 @@ namespace algav {
 	}
 
 	void FileBinomiale::AjoutMin(TournoiBinomial & T){
-		tournois.push_back(T);
+		tournois.push_back(std::move(T));
 		size += T.getSize();
 	}
 
@@ -91,10 +92,10 @@ namespace algav {
 	FileBinomiale FileBinomiale::UFret(FileBinomiale & F, TournoiBinomial & T){
 		if (T.EstVide()) {
 			if (EstVide()){
-				return F;
+				return std::move(F);
 			}
 			if (F.EstVide()){
-				return *this;
+				return std::move(*this);
 			}
 
 			TournoiBinomial T1 = MinDeg();
@@ -103,19 +104,19 @@ namespace algav {
 				Reste();
 				UnionFile(F);
 				AjoutMin(T1);
-				return *this;
+				return std::move(*this);
 			}
 			else if (T1.Degre() > T2.Degre()){
 				F.Reste();
 				F.UnionFile(*this);
 				F.AjoutMin(T2);
-				return F;
+				return std::move(F);
 			}
 			else if (T1.Degre() == T2.Degre()){
 				Reste();
 				F.Reste();
 				T1.Union2Tid(T2);
-				return UFret(F, T1);
+				return std::move(UFret(F, T1));
 			}
 		}
 		else {
@@ -135,7 +136,7 @@ namespace algav {
 			if (T.Degre() < T1.Degre() && T.Degre() < T2.Degre()){
 				UnionFile(F);
 				AjoutMin(T);
-				return *this;
+				return std::move(*this);
 			}
 			else if (T.Degre() == T1.Degre() && T.Degre() == T2.Degre()){
 				Reste();
@@ -148,12 +149,12 @@ namespace algav {
 			else if (T.Degre() == T1.Degre() && T.Degre() < T2.Degre()){
 				Reste();
 				T1.Union2Tid(T);
-				return UFret(F, T1);
+				return std::move(UFret(F, T1));
 			}
 			else if (T.Degre() == T2.Degre() && T.Degre() < T1.Degre()){;
 				F.Reste();
 				T2.Union2Tid(T);
-				return F.UFret(*this, T2);
+				return std::move(UFret(*this, T2));
 			}
 		}
 		return *this;
@@ -171,6 +172,7 @@ namespace algav {
 	}
 
 	void FileBinomiale::Construction(std::vector<Key> & keys){
+		Reserve(std::log2(keys.size()+1));
 		for (Key & k : keys){
 			Ajout(k);
 		}
@@ -178,6 +180,10 @@ namespace algav {
 
 	size_t FileBinomiale::getSize(){
 		return size;
+	}
+
+	void FileBinomiale::Reserve(size_t length) {
+		tournois.reserve(length);
 	}
 
 
