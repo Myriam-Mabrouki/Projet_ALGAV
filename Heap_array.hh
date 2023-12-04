@@ -26,7 +26,7 @@ namespace algav {
 
 		void Construction(std::vector<Key> keys);
 
-		Heap_array & Union (Heap_array & h);
+		void Union (Heap_array & h);
 
 		friend std::ostream & operator << (std::ostream & os, const Heap_array & h);
 

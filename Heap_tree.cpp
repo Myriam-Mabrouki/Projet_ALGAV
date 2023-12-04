@@ -4,11 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip>
-#include <queue>
 
 namespace algav {
 
-	Heap_tree * Heap_tree::SupprMin_aux(Heap_tree * parent){
+	Heap_tree * Heap_tree::last_element(Heap_tree * parent){
 		if (left == nullptr || right == nullptr){
             if (left != nullptr){
 				--size;
@@ -28,16 +27,16 @@ namespace algav {
 
             if (size < max_size/2 + (max_size/2)/2){
 				--size;
-                return left->SupprMin_aux(this);
+                return left->last_element(this);
             }
             else {
 				--size;
-                return right->SupprMin_aux(this);
+                return right->last_element(this);
             }
         }
     }
 
-	void Heap_tree::SupprMin_aux2(){
+	void Heap_tree::SupprMin_aux(){
 		if (left == nullptr || right == nullptr){
 			if (left != nullptr && !value->inf(*left->value)){
 				std::swap(value,left->value);
@@ -47,11 +46,11 @@ namespace algav {
 		else {
 			if (!value->inf(*left->value) && left->value->inf(*right->value)){
 				std::swap(value, left->value);
-				left->SupprMin_aux2();
+				left->SupprMin_aux();
 			}
 			else if (!value->inf(*right->value) && right->value->inf(*left->value)){
 				std::swap(value, right->value);
-				right->SupprMin_aux2();
+				right->SupprMin_aux();
 			}
 			else {
 				//No more swapping has to be done
@@ -60,24 +59,24 @@ namespace algav {
 		}
 	}
 
-	Key Heap_tree::SupprMin(){
+	Key * Heap_tree::SupprMin(){
 
 		Key * res = value;
 
 		if (size == 1) {
 			value = nullptr;
 			--size;
-			return *res;
+			return res;
 		}
 
 		//Deletion of a Key
-		Heap_tree * to_delete = SupprMin_aux(this);
+		Heap_tree * to_delete = last_element(this);
 		value = to_delete->value;
 		delete to_delete;
 		
 		//Finding the right position
-		SupprMin_aux2();
-		return *res;
+		SupprMin_aux();
+		return res;
 	}
 
 	void Heap_tree::Ajout(Key & k){
@@ -140,34 +139,101 @@ namespace algav {
         }
 
 		value = &keys[0];
-		++size;
+		size=1;
 
-		std::queue<Heap_tree*> queue;
-		queue.push(this);
+		std::vector<Heap_tree*> tab;
+		tab.reserve(keys.size());
+		tab.push_back(this);
 
+		size_t indice = 0;
+		//Insertion of all keys
 		for (size_t i = 1; i < keys.size(); ++i) {
-            Heap_tree* current = queue.front();
-            queue.pop();
+            Heap_tree* current = tab[indice++];
 
             current->left = new Heap_tree(&keys[i]);
-			++current->size;
-            queue.push(current->left);
+            tab.push_back(current->left);
 
             ++i;
             if (i < keys.size()) {
                 current->right = new Heap_tree(&keys[i]);
-				++current->size;;
-                queue.push(current->right);
+                tab.push_back(current->right);
             }
         }
 
-		for (size_t i=keys.size(); i>0; i--) {
-			Construction_aux(i-1);
+		//Remontées and update of size
+		for (size_t i=keys.size()/2; i>0; --i) {
+			Heap_tree* current = tab[i-1];
+			current->size += current->left->size;
+			if (current->right != nullptr) 
+				current->size += current->right->size;
+			current->Construction_aux();
 		}
 	}
 
-	void Heap_tree::Construction_aux(size_t i) {
-
+	void Heap_tree::Construction_aux() {
+		//It is a leaf
+		if (size == 1) {
+			return;
+		}
+		if (right != nullptr && left->value->inf(*right->value)) {
+			if (!value->inf(*left->value)) {
+				std::swap(value, left->value);
+				left->Construction_aux();
+			}
+		} else if (right != nullptr && !value->inf(*right->value)) {
+			std::swap(value, right->value);
+			right->Construction_aux();
+		}
 	}
+
+	void Heap_tree::Union (Heap_tree & h) {
+
+		Heap_tree * result;
+
+		if (h.size == 0 || (size != 0 && value->inf(*h.value))) {
+			result = new Heap_tree(SupprMin());
+		} else if (h.size != 0) {
+			result = new Heap_tree(h.SupprMin());
+		} else {
+			return;
+		}
+
+		std::vector<Heap_tree*> tab;
+		tab.reserve(size + h.size);
+		tab.push_back(result);
+
+		size_t indice = 0;
+
+		while (size != 0 || h.size != 0) {
+			Heap_tree* current = tab[indice++];
+
+			if (h.size == 0 || (size != 0 && value->inf(*h.value))) {
+				current->left = new Heap_tree(SupprMin());
+			} else {
+				current->left = new Heap_tree(h.SupprMin());
+			}
+			tab.push_back(current->left);
+
+            if (size != 0 || h.size != 0) {
+                if (h.size == 0 || (size != 0 && value->inf(*h.value))) {
+					current->right = new Heap_tree(SupprMin());
+				} else {
+					current->right = new Heap_tree(h.SupprMin());
+				}
+				tab.push_back(current->right);
+            }
+		}
+
+		//Update of size of all non-leaf nodes
+		for (size_t i=tab.size()/2; i>0; --i) {
+			Heap_tree* current = tab[i-1];
+			current->size += current->left->size;
+			if (current->right != nullptr) 
+				current->size += current->right->size;
+		}
+
+		*this = *result;
+	}
+
 
 }

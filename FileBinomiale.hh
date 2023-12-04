@@ -2,7 +2,6 @@
 
 #include "Key.hh"
 #include <vector>
-#include <list>
 #include <cmath>
 
 namespace algav {

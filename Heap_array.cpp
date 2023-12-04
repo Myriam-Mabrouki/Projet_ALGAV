@@ -95,7 +95,7 @@ namespace algav {
 				heap.push_back(k);
 				++size;
 			}
-			for (size_t i=keys.size()/2; i>0; i--) {
+			for (size_t i=keys.size()/2; i>0; --i) {
 				Construction_aux(i-1);
 			}
 		}
@@ -118,7 +118,7 @@ namespace algav {
 			}
 		}
 
-		Heap_array & Heap_array::Union (Heap_array & h) {
+		void Heap_array::Union (Heap_array & h) {
 			std::vector<Key> result;
 			result.reserve(size + h.size);
 			size_t tmp = size + h.size;
@@ -133,7 +133,6 @@ namespace algav {
 
 			heap = result;
 			size = tmp;
-			return *this;
 		}
 
 
