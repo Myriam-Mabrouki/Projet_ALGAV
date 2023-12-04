@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++11 -O2
+CXXFLAGS = -Wall -g0 -O3 -std=c++2a
 
 SRCS = BinarySearchTree.cpp FileBinomiale.cpp Heap_array.cpp Heap_tree.cpp main.cpp
 OBJS = $(SRCS:.cpp=.o)
