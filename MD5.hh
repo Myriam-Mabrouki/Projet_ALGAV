@@ -15,40 +15,7 @@ namespace algav {
 		unsigned char b[4];
 	} MD5union;
 
-	typedef unsigned DigestArray[4];
-
-	static unsigned func0(unsigned abcd[]){
-		return (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
-	}
-
-	static unsigned func1(unsigned abcd[]){
-		return (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
-	}
-
-	static unsigned func2(unsigned abcd[]){
-		return  abcd[1] ^ abcd[2] ^ abcd[3];
-	}
-
-	static unsigned func3(unsigned abcd[]){
-		return abcd[2] ^ (abcd[1] | ~abcd[3]);
-	}
-
-	typedef unsigned(*DgstFctn)(unsigned a[]);
-
-	static unsigned *calctable(unsigned *k)
-	{
-		double s, pwr;
-		int i;
-
-		pwr = pow(2.0, 32);
-		for (i = 0; i<64; i++) {
-			s = fabs(sin(1.0 + i));
-			k[i] = (unsigned)(s * pwr);
-		}
-		return k;
-	}
-
-	static unsigned rol(unsigned r, short N)
+	static unsigned leftRotate(unsigned r, short N)
 	{
 		unsigned  mask1 = (1 << N) - 1;
 		return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
@@ -57,43 +24,47 @@ namespace algav {
 	static std::string MD5Hash(std::string msg)
 	{
 		int mlen = msg.length();
-		static DigestArray h0 = { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476 };
-		static DgstFctn ff[] = { &func0, &func1, &func2, &func3 };
-		static short M[] = { 1, 5, 3, 7 };
-		static short O[] = { 0, 1, 5, 0 };
-		static short rot0[] = { 7, 12, 17, 22 };
-		static short rot1[] = { 5, 9, 14, 20 };
-		static short rot2[] = { 4, 11, 16, 23 };
-		static short rot3[] = { 6, 10, 15, 21 };
-		static short *rots[] = { rot0, rot1, rot2, rot3 };
-		static unsigned kspace[64];
-		static unsigned *k;
 
-		static DigestArray h;
-		DigestArray abcd;
-		DgstFctn fctn;
-		short m, o, g;
-		unsigned f;
-		short *rotn;
+		// Initialize variables:
+		unsigned h0 = 0x67452301;
+		unsigned h1 = 0xEFCDAB89; 
+		unsigned h2 = 0x98BADCFE;
+		unsigned h3 = 0x10325476;
+
+		// r specifies the per-round shift amounts
+		static short r [] = { 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+							  5, 9,  14, 20, 5, 9,  14, 20, 5, 9,  14, 20, 5, 9,  14, 20,
+							  4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+							  6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21 };
+
+
+		static unsigned k[64];
+		for (size_t i = 0; i<64; ++i) {
+			k[i] = (unsigned)(fabs(sin(1.0 + i)) * 4294967296); //2^32 = 4294967296
+		}
+
 		union {
 			unsigned w[16];
 			char     b[64];
 		}mm;
+
 		int os = 0;
-		int grp, grps, q, p;
+		int grps, q;
 		unsigned char *msg2;
 
-		if (k == NULL) k = calctable(kspace);
-
-		for (q = 0; q<4; q++) h[q] = h0[q];
-
 		{
+			// Pre-processing: adding a single 1 bit
 			grps = 1 + (mlen + 8) / 64;
 			msg2 = (unsigned char*)malloc(64 * grps);
 			memcpy(msg2, msg.c_str(), mlen);
 			msg2[mlen] = (unsigned char)0x80;
 			q = mlen + 1;
-			while (q < 64 * grps){ msg2[q] = 0; q++; }
+
+			// Pre-processing: padding with zeros
+			while (q < 64 * grps){
+				msg2[q] = 0; q++;
+			}
+
 			{
 				MD5union u;
 				u.w = 8 * mlen;
@@ -102,33 +73,63 @@ namespace algav {
 			}
 		}
 
-		for (grp = 0; grp<grps; grp++)
-		{
-			memcpy(mm.b, msg2 + os, 64);
-			for (q = 0; q<4; q++) abcd[q] = h[q];
-			for (p = 0; p<4; p++) {
-				fctn = ff[p];
-				rotn = rots[p];
-				m = M[p]; o = O[p];
-				for (q = 0; q<16; q++) {
-					g = (m*q + o) % 16;
-					f = abcd[1] + rol(abcd[0] + fctn(abcd) + k[q + 16 * p] + mm.w[g], rotn[q % 4]);
+		// Process the message in successive 512-bit chunks:
+		for (size_t grp = 0; grp<grps; ++grp){
 
-					abcd[0] = abcd[3];
-					abcd[3] = abcd[2];
-					abcd[2] = abcd[1];
-					abcd[1] = f;
+			memcpy(mm.b, msg2 + os, 64);
+
+			unsigned a = h0;
+			unsigned b = h1;
+			unsigned c = h2;
+			unsigned d = h3;
+			unsigned temp, f;
+			short g;
+
+			//Main loop
+			for (size_t i = 0; i<64; ++i) {
+
+				if (i >= 0 && i < 16) {
+					f = (b & c) | (~b & d);
+					g = i;
 				}
+				if (i >= 16 && i < 32) {
+					f = (d & b) | (~d & c);
+					g = (5*i + 1) % 16;
+				}
+				if (i >= 32 && i < 48) {
+					f = b ^ c ^ d;
+					g = (3*i + 5) % 16;
+				}
+				if (i >= 48 && i < 64) {
+					f = c ^ (b | ~d);
+					g = (7*i) % 16;
+				}
+
+				temp = d;
+				d = c;
+				c = b;
+				b = leftRotate(a + f + k[i] + mm.w[g], r[i]) + b;
+				a = temp;
+
+
 			}
-			for (p = 0; p<4; p++)
-				h[p] += abcd[p];
+
+			h0 += a;
+			h1 += b;
+			h2 += c;
+			h3 += d;
+
 			os += 64;
 		}
 
+		//Concatenate h0, h1, h2 and h3
 		std::string str;
 		MD5union uu;
-		for (int j = 0; j<4; j++){
-			uu.w = h[j];
+		for (int j = 0; j<4; ++j){
+			if (j == 0) uu.w = h0;
+			if (j == 1) uu.w = h1;
+			if (j == 2) uu.w = h2;
+			if (j == 3) uu.w = h3;
 			char s[9];
 			sprintf(s, "%02x%02x%02x%02x", uu.b[0], uu.b[1], uu.b[2], uu.b[3]);
 			str += s;
