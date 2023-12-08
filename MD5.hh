@@ -21,7 +21,7 @@ namespace algav {
 		return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
 	}
 
-	static std::string MD5Hash(std::string msg)
+	Key MD5Hash(std::string msg)
 	{
 		int mlen = msg.length();
 
@@ -120,7 +120,7 @@ namespace algav {
 		}
 
 		//Concatenate h0, h1, h2 and h3
-		std::string str;
+		std::string str = "0x";
 		MD5union uu;
 		for (int j = 0; j<4; ++j){
 			if (j == 0) uu.w = h0;
@@ -131,8 +131,8 @@ namespace algav {
 			sprintf(s, "%02x%02x%02x%02x", uu.b[0], uu.b[1], uu.b[2], uu.b[3]);
 			str += s;
 		}
-
-		return str;
+		
+		return Key(str);
 	}
 
 }

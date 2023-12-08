@@ -69,8 +69,12 @@ int main(int argc, char ** argv) {
 
 	string file = argv[1];
 	vector<Key> keys = readKeysFromFile(file);
+	/* vector<Key> keys;
+	for (int i =0; i < 1000; ++i){
+	keys.emplace_back("0xAA");}*/
 
-	vector<Key> keys1;	
+
+	/* vector<Key> keys1;	
 	for (size_t i=0; i<5; i++)  {
 		keys1.push_back(keys[i]);
 	}
@@ -78,7 +82,7 @@ int main(int argc, char ** argv) {
 	vector<Key> keys2;
 	for (size_t i=5; i<20; i++)  {
 		keys2.push_back(keys[i]);
-	}
+	} */
 
 
 	/*cout << "========== TEST KEYS ==========" << endl;
@@ -109,7 +113,7 @@ int main(int argc, char ** argv) {
 	cout << "h1 with the size of " << h1.getSize() << " : " << endl << h1 << endl << endl;
 
 	Heap_array h2 = Heap_array();
-	h2.Construction(keys2);
+	h2.Construction(keys);
 	cout << "h2 with the size of " << h2.getSize() << " : " << endl << h2 << endl << endl;
 
 	h1.Union(h2);
@@ -134,7 +138,7 @@ int main(int argc, char ** argv) {
 	cout << "tt1 with the size of " << tt1.getSize() << " : " << endl << tt1 << endl;
 
 	Heap_tree tt2 = Heap_tree();
-	tt2.Construction(keys2);
+	tt2.Construction(keys);
 	cout << "tt2 with the size of " << tt2.getSize() << " : " << endl << tt2 << endl;
 
 	tt1.Union(tt2);
@@ -217,17 +221,17 @@ int main(int argc, char ** argv) {
 
 	cout << endl << "========== TEST MD5 ==========" << endl << endl;
 
-	string md5_1 = MD5Hash("");
-	string md5_2 = MD5Hash("The quick brown fox jumps over the lazy dog");
-	string md5_3 = MD5Hash("The quick brown fox jumps over the lazy dog.");
-	string md5_4 = MD5Hash("Et l’unique cordeau des trompettes marines");
-	string md5_5 = MD5Hash("Et l’unique cordeau des trompettes marinEs");
+	Key md5_1 = MD5Hash("");
+	Key md5_2 = MD5Hash("The quick brown fox jumps over the lazy dog");
+	Key md5_3 = MD5Hash("The quick brown fox jumps over the lazy dog.");
+	Key md5_4 = MD5Hash("Et l’unique cordeau des trompettes marines");
+	Key md5_5 = MD5Hash("Et l’unique cordeau des trompettes marinEs");
 
 	cout << md5_1 << endl << md5_2 << endl << md5_3 << endl << md5_4 << endl << md5_5 << endl;
 
 
 
-	cout << endl << "========== TEST BINARY_SEARCH_TREE ==========" << endl << endl;
+	/*cout << endl << "========== TEST BINARY_SEARCH_TREE ==========" << endl << endl;
 
 	BinarySearchTree bst1 = BinarySearchTree();
 
@@ -245,9 +249,9 @@ int main(int argc, char ** argv) {
 	std::string path = "cles_alea/";
 	std::string filename;
 
-	int tab[] = {1000, 5000, 10000, 20000, 50000, 80000, 120000, 200000};
+	int tab[] = {1000, 5000, 10000, 20000, 50000, 80000, 120000, 200000, 800000, 1600000};
 
-	/*cout << "Heap array..." << endl;
+	cout << "Heap array..." << endl;
 	std::ofstream file_heap_array("complexity_heap_array.txt");
 	for (int i : tab) {
 
@@ -281,7 +285,7 @@ int main(int argc, char ** argv) {
 
     }
 	// Union
-	for (int i : tab) {
+	/*for (int i : tab) {
 
 		float moyenne_ajout = 0;
 		float moyenne_constr = 0;
@@ -319,10 +323,10 @@ int main(int argc, char ** argv) {
 		moyenne_constr /= 5;
         file_heap_array << i+200000 << " " << moyenne_ajout << " " << moyenne_constr << endl;
 
-    }
+    }*/
 
 
-	cout << "Heap tree..." << endl;
+	/*cout << "Heap tree..." << endl;
 	std::ofstream file_heap_tree("complexity_heap_tree.txt");
 	for (int i : tab) {
 
@@ -451,38 +455,38 @@ int main(int argc, char ** argv) {
 
 
 
-	/*cout << endl << "========== EXPERIMENTAL STUDY ==========" << endl << endl;
+	cout << endl << "========== EXPERIMENTAL STUDY ==========" << endl << endl;
 
-	path = "Shakespeare/";
+	string path = "Shakespeare/";
 
 	vector<vector<string>> shakespeare_works;
 
 	//Browse Shakespeare directory
 	for (const auto& file : filesystem::directory_iterator(path)){
+		
 		//Add all the words encountered in one book
 		shakespeare_works.push_back(readStringsFromFile(file.path()));
 	}
 
-	vector<string> hash_shakespeare;
 	unordered_set<string> words_shakespeare;
 	for (auto v : shakespeare_works){
 		for (string s : v){
-			hash_shakespeare.push_back(MD5Hash(s));
 			words_shakespeare.insert(s);
 		}
 	}
 
+	//TODO faire un dico pour lier mot et hash: hash <= clé et liste de mots <= value
+	//toutes les listes de mots dont la taille > ou = 2 <-- collisions
+	vector<Key> hash_shakespeare;
+	for (string w : words_shakespeare){
+		hash_shakespeare.push_back(MD5Hash(w));
+	}
 
-	vector<Key> hash_keys;
-	for (string h : words_shakespeare){
-		hash_keys.push_back(Key(h));
-	}*/
 
-
-//	BinarySearchTree BST_MD5 = BinarySearchTree();
-//	for (Key k : hash_keys){
-//		BST_MD5.Insert(k);
-//	}
+	BinarySearchTree BST_MD5 = BinarySearchTree();
+	for (Key k : hash_shakespeare){
+		BST_MD5.Insert(k);
+	}
 
 	return 0;
 
