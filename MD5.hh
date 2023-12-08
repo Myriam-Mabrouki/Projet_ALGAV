@@ -48,35 +48,32 @@ namespace algav {
 			char     b[64];
 		}mm;
 
-		int os = 0;
-		int grps, q;
+		
+		int blocks;
 		unsigned char *msg2;
 
-		{
-			// Pre-processing: adding a single 1 bit
-			grps = 1 + (mlen + 8) / 64;
-			msg2 = (unsigned char*)malloc(64 * grps);
-			memcpy(msg2, msg.c_str(), mlen);
-			msg2[mlen] = (unsigned char)0x80;
-			q = mlen + 1;
+		// Pre-processing: adding a single 1 bit
+		blocks = 1 + (mlen + 8) / 64;
+		msg2 = (unsigned char*)malloc(64 * blocks);
+		memcpy(msg2, msg.c_str(), mlen);
+		msg2[mlen] = (unsigned char)0x80;
 
-			// Pre-processing: padding with zeros
-			while (q < 64 * grps){
-				msg2[q] = 0; q++;
-			}
+		// Pre-processing: padding with zeros
+		 for (size_t i = mlen + 1; i < 64 * blocks; ++i){
+			msg2[i] = 0;
+		 }
 
-			{
-				MD5union u;
-				u.w = 8 * mlen;
-				q -= 8;
-				memcpy(msg2 + q, &u.w, 4);
-			}
-		}
+
+		MD5union u;
+		u.w = 8 * mlen;
+		memcpy(msg2 + 64 * blocks - 8, &u.w, 4);
+
 
 		// Process the message in successive 512-bit chunks:
-		for (size_t grp = 0; grp<grps; ++grp){
+		int offset = 0;
+		for (size_t block = 0; block < blocks; ++block){
 
-			memcpy(mm.b, msg2 + os, 64);
+			memcpy(mm.b, msg2 + offset, 64);
 
 			unsigned a = h0;
 			unsigned b = h1;
@@ -119,7 +116,7 @@ namespace algav {
 			h2 += c;
 			h3 += d;
 
-			os += 64;
+			offset += 64;
 		}
 
 		//Concatenate h0, h1, h2 and h3
