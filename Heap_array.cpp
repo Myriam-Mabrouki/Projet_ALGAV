@@ -89,12 +89,10 @@ namespace algav {
 			return size;
 		}
 
-		void Heap_array::Construction(std::vector<Key> keys) {
-			heap.reserve(keys.size());
-			for (Key & k : keys){
-				heap.push_back(k);
-				++size;
-			}
+		void Heap_array::Construction(std::vector<Key> & keys) {
+			heap = std::vector<Key>(keys);
+			size = keys.size();
+			
 			for (size_t i=keys.size()/2; i>0; --i) {
 				Construction_aux(i-1);
 			}

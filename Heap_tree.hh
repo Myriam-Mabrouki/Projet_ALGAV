@@ -62,17 +62,6 @@ namespace algav {
 			return os << std::dec;
 		}
 		
-		/*friend std::ostream & operator << (std::ostream & os, const Heap_tree & h){
-			os << std::hex << *h.value << " ";
-			if (h.left != nullptr){
-				os << *h.left; 
-			}
-			if (h.right != nullptr){
-				os << *h.right;
-			}
-			return os << std::dec;
-		}*/
-
 	};
 
 

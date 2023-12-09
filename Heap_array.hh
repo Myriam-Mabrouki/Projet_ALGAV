@@ -24,7 +24,7 @@ namespace algav {
 
 		size_t getSize();
 
-		void Construction(std::vector<Key> keys);
+		void Construction(std::vector<Key> & keys);
 
 		void Union (Heap_array & h);
 
