@@ -15,6 +15,11 @@ namespace algav {
 		std::array<unsigned long,4> key;
 
 	public:
+
+		Key() {
+			key = {0, 0, 0, 0};
+		}
+
 		Key(std::string hex){
 			hex = hex.substr(2, hex.size());
 
@@ -33,6 +38,10 @@ namespace algav {
 				iss >> std::hex >> value;
 				key[i]=value;
 			}
+		}
+
+		Key(const Key& other) {
+			key = other.key;
 		}
 
 		~Key(){}

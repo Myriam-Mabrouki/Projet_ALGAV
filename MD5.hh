@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string.h>
 #include <iomanip>
-#include "Key.hh"
 
 namespace algav {
 
@@ -21,7 +20,7 @@ namespace algav {
 		return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
 	}
 
-	Key MD5Hash(std::string msg)
+	std::string MD5Hash(std::string msg)
 	{
 		int mlen = msg.length();
 
@@ -132,7 +131,7 @@ namespace algav {
 			str += s;
 		}
 		
-		return Key(str);
+		return str;
 	}
 
 }

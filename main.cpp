@@ -12,6 +12,7 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
+#include <unordered_map>
 #include <filesystem>
 
 
@@ -221,11 +222,11 @@ int main(int argc, char ** argv) {
 
 	cout << endl << "========== TEST MD5 ==========" << endl << endl;
 
-	Key md5_1 = MD5Hash("");
-	Key md5_2 = MD5Hash("The quick brown fox jumps over the lazy dog");
-	Key md5_3 = MD5Hash("The quick brown fox jumps over the lazy dog.");
-	Key md5_4 = MD5Hash("Et l’unique cordeau des trompettes marines");
-	Key md5_5 = MD5Hash("Et l’unique cordeau des trompettes marinEs");
+	string md5_1 = MD5Hash("");
+	string md5_2 = MD5Hash("The quick brown fox jumps over the lazy dog");
+	string md5_3 = MD5Hash("The quick brown fox jumps over the lazy dog.");
+	string md5_4 = MD5Hash("Et l’unique cordeau des trompettes marines");
+	string md5_5 = MD5Hash("Et l’unique cordeau des trompettes marinEs");
 
 	cout << md5_1 << endl << md5_2 << endl << md5_3 << endl << md5_4 << endl << md5_5 << endl;
 
@@ -475,13 +476,38 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	//TODO faire un dico pour lier mot et hash: hash <= clé et liste de mots <= value
-	//toutes les listes de mots dont la taille > ou = 2 <-- collisions
+
 	vector<Key> hash_shakespeare;
+	unordered_map<string, string> hashmap;
+	unordered_set<string> collisions;
+
 	for (string w : words_shakespeare){
-		hash_shakespeare.push_back(MD5Hash(w));
+
+		string hash_string = MD5Hash(w);
+		hash_shakespeare.push_back(Key(hash_string));
+
+		auto search = hashmap.find(hash_string);
+		if (search == hashmap.end()){
+			hashmap.insert({hash_string, w});
+		}
+		else {
+			cout << "collisions" << endl;
+			collisions.insert(hashmap.find(hash_string)->first);
+			collisions.insert(w);
+		}
 	}
 
+	if (collisions.size() > 0) {
+		cout << "L'ensemble des mots pour lesquels il existe des collisions sont les suivants : ";
+		for (auto & e : collisions){
+			cout << e << " ";
+		}
+		cout << "." << endl;
+	}
+	else {
+		cout << "Il n'y a aucune collision." << endl;
+	}
+	
 
 	BinarySearchTree BST_MD5 = BinarySearchTree();
 	for (Key k : hash_shakespeare){
