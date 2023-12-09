@@ -78,7 +78,7 @@ namespace algav {
 
 		}
 
-		void Heap_array::AjoutsIteratifs(std::vector<Key> keys){
+		void Heap_array::AjoutsIteratifs(std::vector<Key> & keys){
 			for (Key & k : keys){
 				Ajout(k);
 			}
@@ -90,11 +90,12 @@ namespace algav {
 		}
 
 		void Heap_array::Construction(std::vector<Key> & keys) {
-			heap = std::vector<Key>(keys);
+			heap.reserve(keys.size());
+			heap.assign(keys.begin(), keys.end());
 			size = keys.size();
 			
 			for (size_t i=keys.size()/2; i>0; --i) {
-				Construction_aux(i-1);
+				Construction_aux(i);
 			}
 		}
 
@@ -103,15 +104,15 @@ namespace algav {
 			size_t right = 2*i+1;
 			size_t max = i;
 
-			if (left < heap.size() && heap[left].inf(heap[max])) {
+			if (left-1 < heap.size() && heap[left-1].inf(heap[max-1])) {
 				max = left;
 			}
-			if (right < heap.size() && heap[right].inf(heap[max])) {
+			if (right-1 < heap.size() && heap[right-1].inf(heap[max-1])) {
 				max = right;
 			}
 
 			if (i != max) {
-				std::swap(heap[i], heap[max]);
+				std::swap(heap[i-1], heap[max-1]);
 				Construction_aux(max);
 			}
 		}

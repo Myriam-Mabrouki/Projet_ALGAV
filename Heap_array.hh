@@ -20,7 +20,7 @@ namespace algav {
 
 		void Ajout(Key & k);
 
-		void AjoutsIteratifs(std::vector<Key> keys);
+		void AjoutsIteratifs(std::vector<Key> & keys);
 
 		size_t getSize();
 
