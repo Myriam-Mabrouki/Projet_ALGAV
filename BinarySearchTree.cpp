@@ -70,5 +70,7 @@ namespace algav {
 				right->Get(k);
 			}
 	    }
+
+		return "";
 	}
 }
