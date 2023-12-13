@@ -3,21 +3,25 @@
 #include "Key.hh"
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 namespace algav {
 
 	class BinarySearchTree{
 
 	private:
-		Key * value;
+		Key * key;
+		std::string value;
 		BinarySearchTree * left;
 		BinarySearchTree * right;
 		size_t size;
+		size_t height;
+
 		void print_tree(std::ostream & os, const BinarySearchTree & bst, size_t indent) const {
 			for (size_t i = 0; i < indent; ++i) {
 				os << "  ";
 			}
-			os << "| " << std::hex << *bst.value << "\n";
+			os << "| " << std::hex << *bst.key << "\n";
 			if (bst.left != nullptr) {
 				print_tree(os, *bst.left, indent+1);
 			} else {
@@ -37,9 +41,9 @@ namespace algav {
 		}
 
 	public:
-		BinarySearchTree():value(nullptr),left(nullptr),right(nullptr),size(0){}
+		BinarySearchTree():key(nullptr),value(""),left(nullptr),right(nullptr),size(0){}
 
-		BinarySearchTree(Key * value):value(value),left(nullptr),right(nullptr),size(1){}
+		BinarySearchTree(Key * key, std::string value):key(key),value(value),left(nullptr),right(nullptr),size(1){}
 
 		~BinarySearchTree(){
 			delete left;
@@ -50,7 +54,8 @@ namespace algav {
 			return size;
 		}
 
-		void Insert(Key & v);
+		bool Insert(Key & k, std::string v);
+		std::string Get(Key & k);
 
 		friend std::ostream & operator << (std::ostream & os, const BinarySearchTree & bst) {
 			if (bst.size == 0) {
