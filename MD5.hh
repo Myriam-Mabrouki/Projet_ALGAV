@@ -58,7 +58,7 @@ namespace algav {
 		msg2[mlen] = (unsigned char)0x80;
 
 		// Pre-processing: padding with zeros
-		 for (size_t i = mlen + 1; i < 64 * blocks; ++i){
+		 for (int i = mlen + 1; i < 64 * blocks; ++i){
 			msg2[i] = 0;
 		 }
 
@@ -70,7 +70,7 @@ namespace algav {
 
 		// Process the message in successive 512-bit chunks:
 		int offset = 0;
-		for (size_t block = 0; block < blocks; ++block){
+		for (int block = 0; block < blocks; ++block){
 
 			memcpy(mm.b, msg2 + offset, 64);
 
@@ -82,7 +82,7 @@ namespace algav {
 			short g;
 
 			//Main loop
-			for (size_t i = 0; i<64; ++i) {
+			for (int i = 0; i<64; ++i) {
 
 				if (i >= 0 && i < 16) {
 					f = (b & c) | (~b & d);
