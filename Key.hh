@@ -55,7 +55,7 @@ namespace algav {
 		}
 
 		bool eg (Key & other) {
-			return other.key == key;
+			return other.key[0] == key[0] &&  other.key[1] == key[1] && other.key[2] == key[2] && other.key[3] == key[3];
 		}
 
 		friend std::ostream & operator << (std::ostream & os, const Key & k){
