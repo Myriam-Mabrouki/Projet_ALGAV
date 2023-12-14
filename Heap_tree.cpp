@@ -232,7 +232,9 @@ namespace algav {
 				current->size += current->right->size;
 		}
 
-		*this = *result;
+		std::swap(*this, *result);
+		delete result;
+
 	}
 
 

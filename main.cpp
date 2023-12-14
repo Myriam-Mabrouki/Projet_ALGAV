@@ -17,7 +17,7 @@
 #include <random>
 #include <set>
 
-#define ITERATIONS 1
+#define ITERATIONS 50
 
 
 using namespace algav;
@@ -522,43 +522,40 @@ int main(int argc, char ** argv) {
 	//Question 6
 	cout << "Mesures des temps sur l'oeuvre de Shakespeare" << endl;
 	std::ofstream shakespeare_courbes("complexity_with_shakespeare.txt");
-	FileBinomiale f = FileBinomiale();
-	Heap_array ha = Heap_array();
-	Heap_tree ht = Heap_tree();
 
-	
+	//Construction
+
 	float mean_file = 0;
 	float mean_ha = 0;	
-	float mean_ht = 0;	
-	//Construction
+	float mean_ht = 0;
+
 	for(size_t k = 0; k < ITERATIONS; ++k){
+		FileBinomiale f = FileBinomiale();
+		Heap_array ha = Heap_array();
+		Heap_tree ht = Heap_tree();
+
 		auto begin = chrono::high_resolution_clock::now();
 		f.Construction(hash_shakespeare);
 		auto end = chrono::high_resolution_clock::now();
-		auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		auto duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_file += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ha.Construction(hash_shakespeare);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ha += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ht.Construction(hash_shakespeare);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ht += duree.count();
 	}
 	shakespeare_courbes << "Construction: " << (mean_file/ITERATIONS) << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;
 
 	
 	//Union
-	FileBinomiale f1 = FileBinomiale();
-	Heap_array ha_1 = Heap_array();
-	Heap_tree ht_1 = Heap_tree();
-
-	FileBinomiale f2 = FileBinomiale();
-	Heap_array ha_2 = Heap_array();
-	Heap_tree ht_2 = Heap_tree();
 
 	vector<Key> tmp1, tmp2;
 	tmp1.reserve(hash_shakespeare.size());
@@ -569,32 +566,43 @@ int main(int argc, char ** argv) {
 	for(size_t j = hash_shakespeare.size()/2; j < hash_shakespeare.size(); ++j){
 		tmp2.emplace_back(hash_shakespeare[j]);
 	}
-	f1.Construction(tmp1);
-	f2.Construction(tmp2);
-	ha_1.Construction(tmp1);
-	ha_2.Construction(tmp2);
-	ht_1.Construction(tmp1);
-	ht_2.Construction(tmp2);
 
 	mean_file = 0;
 	mean_ha = 0;	
 	mean_ht = 0;
 
 	for(size_t k = 0; k < ITERATIONS; ++k){
+		FileBinomiale f1 = FileBinomiale();
+		Heap_array ha_1 = Heap_array();
+		Heap_tree ht_1 = Heap_tree();
+
+		FileBinomiale f2 = FileBinomiale();
+		Heap_array ha_2 = Heap_array();
+		Heap_tree ht_2 = Heap_tree();
+
+		f1.Construction(tmp1);
+		f2.Construction(tmp2);
+		ha_1.Construction(tmp1);
+		ha_2.Construction(tmp2);
+		ht_1.Construction(tmp1);
+		ht_2.Construction(tmp2);
+
 		auto begin = chrono::high_resolution_clock::now();
 		f1.UnionFile(f2);
 		auto end = chrono::high_resolution_clock::now();
-		auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		auto duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_file += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ha_1.Union(ha_2);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ha += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ht_1.Union(ht_2);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ht += duree.count();
 	}
 	shakespeare_courbes << "Union: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;
@@ -608,20 +616,29 @@ int main(int argc, char ** argv) {
 	mean_ht = 0;
 
 	for(size_t k = 0; k < ITERATIONS; ++k){
+		FileBinomiale f = FileBinomiale();
+		Heap_array ha = Heap_array();
+		Heap_tree ht = Heap_tree();
+		f.Construction(tmp1);
+		ha.Construction(tmp1);
+		ht.Construction(tmp1);
+
 		auto begin = chrono::high_resolution_clock::now();
 		f.Ajout(hash_shakespeare[k]);
 		auto end = chrono::high_resolution_clock::now();
-		auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		auto duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_file += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ha.Ajout(hash_shakespeare[k]);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ha += duree.count();
+
 		begin = chrono::high_resolution_clock::now();
 		ht.Ajout(hash_shakespeare[k]);
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ht += duree.count();
 	}
 	shakespeare_courbes << "Ajout: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;
@@ -634,20 +651,27 @@ int main(int argc, char ** argv) {
 	mean_ht = 0;
 
 	for(size_t k = 0; k < ITERATIONS; ++k){
+		FileBinomiale f = FileBinomiale();
+		Heap_array ha = Heap_array();
+		Heap_tree ht = Heap_tree();
+		f.Construction(tmp1);
+		ha.Construction(tmp1);
+		ht.Construction(tmp1);
+
 		auto begin = chrono::high_resolution_clock::now();
 		f.SupprMin();
 		auto end = chrono::high_resolution_clock::now();
-		auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		auto duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_file += duree.count();
 		begin = chrono::high_resolution_clock::now();
 		ha.SupprMin();
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ha += duree.count();
 		begin = chrono::high_resolution_clock::now();
 		ht.SupprMin();
 		end = chrono::high_resolution_clock::now();
-		duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ht += duree.count();
 	}
 	shakespeare_courbes << "SupprMin: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;

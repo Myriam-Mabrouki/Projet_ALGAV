@@ -130,6 +130,8 @@ namespace algav {
 			sprintf(s, "%02x%02x%02x%02x", uu.b[0], uu.b[1], uu.b[2], uu.b[3]);
 			str += s;
 		}
+
+		free(msg2);
 		
 		return str;
 	}
