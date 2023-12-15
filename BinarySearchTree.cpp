@@ -73,4 +73,20 @@ namespace algav {
 
 		return "";
 	}
+
+	int BinarySearchTree::longestBranch() {
+		if (size == 0) {
+			return 0;
+	    }
+		int leftLength = 0;
+		int rightLength = 0;
+		if (left != nullptr) {
+			leftLength = left->longestBranch();
+		} 
+		if (right != nullptr) {
+			rightLength = right->longestBranch();
+		}
+
+		return 1 + std::max(leftLength, rightLength);
+	}
 }

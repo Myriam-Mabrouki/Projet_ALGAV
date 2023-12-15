@@ -55,7 +55,10 @@ namespace algav {
 		}
 
 		bool Insert(Key & k, std::string v);
+
 		std::string Get(Key & k);
+
+		int longestBranch();
 
 		friend std::ostream & operator << (std::ostream & os, const BinarySearchTree & bst) {
 			if (bst.size == 0) {
