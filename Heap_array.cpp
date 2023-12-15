@@ -146,4 +146,8 @@ namespace algav {
 			return os << std::dec;
 		}
 
+		void Heap_array::resize (size_t size) {
+			heap.resize(size);
+		}
+
 }

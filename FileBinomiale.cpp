@@ -77,9 +77,9 @@ namespace algav {
 			}
 		}
 
-		std::cout << "  Min detected in TB" << std::log2(tournois[pos].getSize()) << std::endl;
+		//std::cout << "  Min detected in TB" << std::log2(tournois[pos].getSize()) << std::endl;
 		FileBinomiale F = tournois[pos].Decapite();
-		std::cout << "  Decapitation : " << F << std::endl;
+		//std::cout << "  Decapitation : " << F << std::endl;
 
 		//Erase tournois in position pos
 		size -= tournois[pos].getSize();

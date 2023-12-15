@@ -118,6 +118,8 @@ namespace algav {
 			offset += 64;
 		}
 
+		free(msg2);
+
 		//Concatenate h0, h1, h2 and h3
 		std::string str = "0x";
 		MD5union uu;
@@ -130,8 +132,6 @@ namespace algav {
 			sprintf(s, "%02x%02x%02x%02x", uu.b[0], uu.b[1], uu.b[2], uu.b[3]);
 			str += s;
 		}
-
-		free(msg2);
 		
 		return str;
 	}

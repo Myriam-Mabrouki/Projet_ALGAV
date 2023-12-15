@@ -30,6 +30,8 @@ namespace algav {
 
 		friend std::ostream & operator << (std::ostream & os, const Heap_array & h);
 
+		void resize(size_t size);
+
 	};
 
 }

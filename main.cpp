@@ -67,8 +67,8 @@ vector<string> readStringsFromFile(const std::string& filepath) {
 void generate_jeu(unsigned long long nb_cles) {
 	random_device rd;
 	uniform_int_distribution<unsigned long long> dist(0, numeric_limits<unsigned long long>::max());
+	set<pair<unsigned long long, unsigned long long>> keys; // distinct keys
 	for (size_t i=1 ; i<=5; i++) {
-		set<pair<unsigned long long, unsigned long long>> keys; // distinct keys
 		string filename = "cles_alea/jeu_" + to_string(i) + "_nb_cles_" + to_string(nb_cles) + ".txt";
 		cout << "Generating " << filename << "..." << endl;
 		while (keys.size() < nb_cles) {
@@ -254,225 +254,225 @@ int main(int argc, char ** argv) {
 	}
 
 	cout << "Size : " << bst1.getSize() << endl;
-	cout << bst1 << endl << endl;
+	cout << bst1 << endl;
+	cout << "La branche la plus longue de l'ABR est : " << bst1.longestBranch() << endl << endl;
 
 
 
 	cout << endl << "========== MEASURING COMPLEXITIES ==========" << endl << endl;
 
-	// std::string path = "cles_alea/";
-	// std::string filename;
+	std::string path = "cles_alea/";
+	std::string filename;
+	int tab[] = {1000, 5000, 10000, 20000, 50000, 80000, 120000, 200000, 400000, 500000, 600000, 700000, 800000, 1000000};
 
-	// int tab[] = {1000, 5000, 10000, 20000, 50000, 80000, 120000, 200000};//, 800000, 1600000};
 
+	/* --- Heap array --- */
 
-	// /* --- Heap array --- */
+	/*cout << "Heap array..." << endl;
+	std::ofstream file_heap_array("complexity_heap_array.txt");
+	for (int i : tab) {
 
-	// cout << "Heap array..." << endl;
-	// std::ofstream file_heap_array("complexity_heap_array.txt");
-	// for (int i : tab) {
+		float moyenne_ajout = 0;
+		float moyenne_constr = 0;
 
-	// 	float moyenne_ajout = 0;
-	// 	float moyenne_constr = 0;
+		for (int j = 1; j <= 5; j++) {
+			filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
+			vector<Key> keys = readKeysFromFile(filename);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		cout << filename << "..." << endl;
-	// 		vector<Key> keys = readKeysFromFile(filename);
+			Heap_array h1 = Heap_array();
+			auto begin_ajout = chrono::high_resolution_clock::now();
+			h1.AjoutsIteratifs(keys);
+			auto end_ajout = chrono::high_resolution_clock::now();
+			auto duree_ajout = chrono::duration_cast<chrono::milliseconds>(end_ajout - begin_ajout);
 
-	// 		Heap_array h1 = Heap_array();
-	// 		auto begin_ajout = chrono::high_resolution_clock::now();
-	// 		h1.AjoutsIteratifs(keys);
-	// 		auto end_ajout = chrono::high_resolution_clock::now();
-	// 		auto duree_ajout = chrono::duration_cast<chrono::milliseconds>(end_ajout - begin_ajout);
+			Heap_array h2 = Heap_array();
+			auto begin_constr = chrono::high_resolution_clock::now();
+			h1.Construction(keys);
+			auto end_constr = chrono::high_resolution_clock::now();
+			auto duree_constr = chrono::duration_cast<chrono::milliseconds>(end_constr - begin_constr);
 
-	// 		Heap_array h2 = Heap_array();
-	// 		auto begin_constr = chrono::high_resolution_clock::now();
-	// 		h1.Construction(keys);
-	// 		auto end_constr = chrono::high_resolution_clock::now();
-	// 		auto duree_constr = chrono::duration_cast<chrono::milliseconds>(end_constr - begin_constr);
+			moyenne_ajout += duree_ajout.count();
+			moyenne_constr += duree_constr.count();
+		}
 
-	// 		moyenne_ajout += duree_ajout.count();
-	// 		moyenne_constr += duree_constr.count();
-	// 	}
+		moyenne_ajout /= 5;
+		moyenne_constr /= 5;
+        file_heap_array << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
 
-	// 	moyenne_ajout /= 5;
-	// 	moyenne_constr /= 5;
-    //     file_heap_array << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
+    }*/
 
-    // }
+	/* ---Heap Tree--- */
 
-	// /* ---Heap Tree--- */
+	/*cout << "Heap tree..." << endl;
+	std::ofstream file_heap_tree("complexity_heap_tree.txt");
+	for (int i : tab) {
 
-	// cout << "Heap tree..." << endl;
-	// std::ofstream file_heap_tree("complexity_heap_tree.txt");
-	// for (int i : tab) {
+		float moyenne_ajout = 0;
+		float moyenne_constr = 0;
 
-	// 	float moyenne_ajout = 0;
-	// 	float moyenne_constr = 0;
+		for (int j = 1; j <= 5; j++) {
+			filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
+			vector<Key> keys = readKeysFromFile(filename);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		cout << filename << "..." << endl;
-	// 		vector<Key> keys = readKeysFromFile(filename);
+			Heap_tree h1 = Heap_tree();
+			auto begin_ajout = chrono::high_resolution_clock::now();
+			h1.AjoutsIteratifs(keys);
+			auto end_ajout = chrono::high_resolution_clock::now();
+			auto duree_ajout = chrono::duration_cast<chrono::milliseconds>(end_ajout - begin_ajout);
 
-	// 		Heap_tree h1 = Heap_tree();
-	// 		auto begin_ajout = chrono::high_resolution_clock::now();
-	// 		h1.AjoutsIteratifs(keys);
-	// 		auto end_ajout = chrono::high_resolution_clock::now();
-	// 		auto duree_ajout = chrono::duration_cast<chrono::milliseconds>(end_ajout - begin_ajout);
+			Heap_tree h2 = Heap_tree();
+			auto begin_constr = chrono::high_resolution_clock::now();
+			h2.Construction(keys);
+			auto end_constr = chrono::high_resolution_clock::now();
+			auto duree_constr = chrono::duration_cast<chrono::milliseconds>(end_constr - begin_constr);
 
-	// 		Heap_tree h2 = Heap_tree();
-	// 		auto begin_constr = chrono::high_resolution_clock::now();
-	// 		h2.Construction(keys);
-	// 		auto end_constr = chrono::high_resolution_clock::now();
-	// 		auto duree_constr = chrono::duration_cast<chrono::milliseconds>(end_constr - begin_constr);
+			moyenne_ajout += duree_ajout.count();
+			moyenne_constr += duree_constr.count();
+		}
 
-	// 		moyenne_ajout += duree_ajout.count();
-	// 		moyenne_constr += duree_constr.count();
-	// 	}
+		moyenne_ajout /= 5;
+		moyenne_constr /= 5;
+        file_heap_tree << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
 
-	// 	moyenne_ajout /= 5;
-	// 	moyenne_constr /= 5;
-    //     file_heap_tree << i << " " << moyenne_ajout << " " << moyenne_constr << endl;
+    }*/
 
-    // }
+	/* ---File Binomiale--- */
 
-	// /* ---File Binomiale--- */
+	/*cout << "File Binomiale..." << endl;
+	std::ofstream file_file_binomiale("complexity_file_binomiale.txt");
+	for (int i : tab) {
 
-	// cout << "File Binomiale..." << endl;
-	// std::ofstream file_file_binomiale("complexity_file_binomiale.txt");
-	// for (int i : tab) {
+		float moyenne = 0;
 
-	// 	float moyenne = 0;
+		for (int j = 1; j <= 5; j++) {
+			filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			cout << filename << "..." << endl;
+			vector<Key> keys = readKeysFromFile(filename);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		filename = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		cout << filename << "..." << endl;
-	// 		vector<Key> keys = readKeysFromFile(filename);
+			FileBinomiale f = FileBinomiale();
+			auto begin = chrono::high_resolution_clock::now();
+			f.Construction(keys);
+			auto end = chrono::high_resolution_clock::now();
+			auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
 
-	// 		FileBinomiale f = FileBinomiale();
-	// 		auto begin = chrono::high_resolution_clock::now();
-	// 		f.Construction(keys);
-	// 		auto end = chrono::high_resolution_clock::now();
-	// 		auto duree = chrono::duration_cast<chrono::milliseconds>(end - begin);
+			moyenne += duree.count();
+		}
 
-	// 		moyenne += duree.count();
-	// 	}
+		moyenne /= 5;
+        file_file_binomiale << i << " " << moyenne << endl;
 
-	// 	moyenne /= 5;
-    //     file_file_binomiale << i << " " << moyenne << endl;
+    }*/
 
-    // }
+	//Union
+	/*cout << "Union Heap array..." << endl;
+	std::ofstream file_heap_array_union("complexity_heap_array_union.txt");
+	for (int i : tab) {
 
-	// //Union
-	// cout << "Union Heap array..." << endl;
-	// std::ofstream file_heap_array_union("complexity_heap_array_union.txt");
-	// for (int i : tab) {
+		float moyenne_union = 0;
 
-	// 	float moyenne_union = 0;
+		for (int j = 1; j <= 5; j++) {
+			std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			std::string filename2;
+			if (j == 5) {
+				filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
+			} else {
+				filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
+			}
+			cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
+			vector<Key> keys1 = readKeysFromFile(filename1);
+			vector<Key> keys2 = readKeysFromFile(filename2);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		std::string filename2;
-	// 		if (j == 5) {
-	// 			filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
-	// 		} else {
-	// 			filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		}
-	// 		cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
-	// 		vector<Key> keys1 = readKeysFromFile(filename1);
-	// 		vector<Key> keys2 = readKeysFromFile(filename2);
+			Heap_array h1 = Heap_array();
+			Heap_array h2 = Heap_array();
+			h1.Construction(keys1);
+			h2.Construction(keys2);
+			auto begin_union = chrono::high_resolution_clock::now();
+			h1.Union(h2);
+			auto end_union = chrono::high_resolution_clock::now();
+			auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
+			moyenne_union += duree_union.count();
+		}
 
-	// 		Heap_array h1 = Heap_array();
-	// 		Heap_array h2 = Heap_array();
-	// 		h1.Construction(keys1);
-	// 		h2.Construction(keys2);
-	// 		auto begin_union = chrono::high_resolution_clock::now();
-	// 		h1.Union(h2);
-	// 		auto end_union = chrono::high_resolution_clock::now();
-	// 		auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
-	// 		moyenne_union += duree_union.count();
-	// 	}
+		moyenne_union /= 5;
+        file_heap_array_union << i+i << " " << moyenne_union << endl;
 
-	// 	moyenne_union /= 5;
-    //     file_heap_array_union << i+i << " " << moyenne_union << endl;
+    }
 
-    // }
+	cout << "Union Heap tree..." << endl;
+	std::ofstream file_heap_tree_union("complexity_heap_tree_union.txt");
+	for (int i : tab) {
 
-	// cout << "Union Heap tree..." << endl;
-	// std::ofstream file_heap_tree_union("complexity_heap_tree_union.txt");
-	// for (int i : tab) {
+		float moyenne_union = 0;
 
-	// 	float moyenne_union = 0;
+		for (int j = 1; j <= 5; j++) {
+			std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			std::string filename2;
+			if (j == 5) {
+				filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
+			} else {
+				filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
+			}
+			cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
+			vector<Key> keys1 = readKeysFromFile(filename1);
+			vector<Key> keys2 = readKeysFromFile(filename2);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		std::string filename2;
-	// 		if (j == 5) {
-	// 			filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
-	// 		} else {
-	// 			filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		}
-	// 		cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
-	// 		vector<Key> keys1 = readKeysFromFile(filename1);
-	// 		vector<Key> keys2 = readKeysFromFile(filename2);
+			Heap_tree h1 = Heap_tree();
+			Heap_tree h2 = Heap_tree();
+			h1.Construction(keys1);
+			h2.Construction(keys2);
+			auto begin_union = chrono::high_resolution_clock::now();
+			h1.Union(h2);
+			auto end_union = chrono::high_resolution_clock::now();
+			auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
+			moyenne_union += duree_union.count();
+		}
 
-	// 		Heap_tree h1 = Heap_tree();
-	// 		Heap_tree h2 = Heap_tree();
-	// 		h1.Construction(keys1);
-	// 		h2.Construction(keys2);
-	// 		auto begin_union = chrono::high_resolution_clock::now();
-	// 		h1.Union(h2);
-	// 		auto end_union = chrono::high_resolution_clock::now();
-	// 		auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
-	// 		moyenne_union += duree_union.count();
-	// 	}
+		moyenne_union /= 5;
+        file_heap_tree_union << i+i << " " << moyenne_union << endl;
 
-	// 	moyenne_union /= 5;
-    //     file_heap_tree_union << i+i << " " << moyenne_union << endl;
+    }
 
-    // }
+	cout << "Union File binomiale..." << endl;
+	std::ofstream file_file_union("complexity_file_binomiale_union.txt");
+	for (int i : tab) {
 
-	// cout << "Union File binomiale..." << endl;
-	// std::ofstream file_file_union("complexity_file_binomiale_union.txt");
-	// for (int i : tab) {
+		float moyenne_union = 0;
 
-	// 	float moyenne_union = 0;
+		for (int j = 1; j <= 5; j++) {
+			std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
+			std::string filename2;
+			if (j == 5) {
+				filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
+			} else {
+				filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
+			}
+			cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
+			vector<Key> keys1 = readKeysFromFile(filename1);
+			vector<Key> keys2 = readKeysFromFile(filename2);
 
-	// 	for (int j = 1; j <= 5; j++) {
-	// 		std::string filename1 = path + "jeu_" + to_string(j) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		std::string filename2;
-	// 		if (j == 5) {
-	// 			filename2 = path + "jeu_1_nb_cles_" + to_string(i) + ".txt";
-	// 		} else {
-	// 			filename2 = path + "jeu_" + to_string(j+1) + "_nb_cles_" + to_string(i) + ".txt";
-	// 		}
-	// 		cout << "Union " << filename1 << " with " << filename2 << "..." << endl;
-	// 		vector<Key> keys1 = readKeysFromFile(filename1);
-	// 		vector<Key> keys2 = readKeysFromFile(filename2);
+			FileBinomiale f1 = FileBinomiale();
+			FileBinomiale f2 = FileBinomiale();
+			f1.Construction(keys1);
+			f2.Construction(keys2);
+			auto begin_union = chrono::high_resolution_clock::now();
+			f1.UnionFile(f2);
+			auto end_union = chrono::high_resolution_clock::now();
+			auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
+			moyenne_union += duree_union.count();
+		}
 
-	// 		FileBinomiale f1 = FileBinomiale();
-	// 		FileBinomiale f2 = FileBinomiale();
-	// 		f1.Construction(keys1);
-	// 		f2.Construction(keys2);
-	// 		auto begin_union = chrono::high_resolution_clock::now();
-	// 		f1.UnionFile(f2);
-	// 		auto end_union = chrono::high_resolution_clock::now();
-	// 		auto duree_union = chrono::duration_cast<chrono::milliseconds>(end_union - begin_union);
-	// 		moyenne_union += duree_union.count();
-	// 	}
+		moyenne_union /= 5;
+        file_file_union << i+i << " " << moyenne_union << endl;
 
-	// 	moyenne_union /= 5;
-    //     file_file_union << i+i << " " << moyenne_union << endl;
-
-    // }
+    }*/
 
 
 
 	cout << endl << "========== EXPERIMENTAL STUDY ==========" << endl << endl;
 
-	string path = "Shakespeare/";
+	path = "Shakespeare/";
 
 	vector<vector<string>> shakespeare_works;
 
@@ -506,6 +506,9 @@ int main(int argc, char ** argv) {
 		++i;
 	};
 
+	cout << "La branche la plus longue de l'ABR de taille " << BST_MD5.getSize() << " est : " << BST_MD5.longestBranch() << endl;
+
+	
 	if (collisions.size() > 0) {
 		cout << "L'ensemble des mots pour lesquels il existe des collisions sont les suivants : ";
 		for (auto & e : collisions){
@@ -516,12 +519,14 @@ int main(int argc, char ** argv) {
 	else {
 		cout << "Il n'y a aucune collision." << endl;
 	}
-		
+
 
 
 	//Question 6
 	cout << "Mesures des temps sur l'oeuvre de Shakespeare" << endl;
-	std::ofstream shakespeare_courbes("complexity_with_shakespeare.txt");
+
+	/*std::ofstream shakespeare_courbes("complexity_with_shakespeare.txt");
+	
 
 	//Construction
 
@@ -608,7 +613,6 @@ int main(int argc, char ** argv) {
 	shakespeare_courbes << "Union: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;
 
 
-
 	//Ajout
 
 	mean_file = 0;
@@ -629,6 +633,7 @@ int main(int argc, char ** argv) {
 		auto duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_file += duree.count();
 
+		//ha.resize(ha.getSize()+1);
 		begin = chrono::high_resolution_clock::now();
 		ha.Ajout(hash_shakespeare[k]);
 		end = chrono::high_resolution_clock::now();
@@ -674,7 +679,7 @@ int main(int argc, char ** argv) {
 		duree = chrono::duration_cast<chrono::microseconds>(end - begin);
 		mean_ht += duree.count();
 	}
-	shakespeare_courbes << "SupprMin: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;
+	shakespeare_courbes << "SupprMin: " << mean_file/ITERATIONS << " " << mean_ha/ITERATIONS << " " << mean_ht/ITERATIONS << endl;*/
 
 
 	return 0;
